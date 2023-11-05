@@ -51,22 +51,16 @@ export const zUdlInputSchema = z
     Derivations: z.union([zUnspecified, zDerivations]),
     "Revenue Share Percentage": z.union([
       z.coerce.number().pipe(zRevenueSharePercentage),
-      z.undefined(),
       z.string().length(0),
     ]),
     "Commercial Use": z.union([zUnspecified, zCommercialUse]),
     "License Type": z.union([zUnspecified, zLicenseType]),
     "License Fee Value": z.union([
       z.coerce.number().pipe(zLicenseFeeValue),
-      z.undefined(),
       z.string().length(0),
     ]),
     "License Fee Currency": z.union([z.enum(["$U"]), zLicenseFeeCurrency]),
-    Expires: z.union([
-      z.coerce.number().pipe(zExpires),
-      z.undefined(),
-      z.string().length(0),
-    ]),
+    Expires: z.union([z.coerce.number().pipe(zExpires), z.string().length(0)]),
     "Payment Address": z.union([z.string().length(0), zPaymentAddress]),
     // "Payment Mode": z.union([zUnspecified, zPaymentMode]),
   })

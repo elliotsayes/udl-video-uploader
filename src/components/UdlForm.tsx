@@ -13,14 +13,14 @@ export const UdlForm = () => {
   const form = useForm<z.infer<typeof zUdlInputSchema>>({
     resolver: zodResolver(zUdlInputSchema),
     defaultValues: {
-      Derivations: 'Unspecified',
-      "Commercial Use": 'Unspecified',
-      "License Type": 'Unspecified',
-      "License Fee Value": undefined,
+      Derivations: "Unspecified",
+      "Commercial Use": "Unspecified",
+      "License Type": "Unspecified",
+      "License Fee Value": "",
       "License Fee Currency": "$U",
-      "Revenue Share Percentage": undefined,
-      Expires: undefined,
-      "Payment Address": '',
+      "Revenue Share Percentage": "",
+      Expires: "",
+      "Payment Address": "",
       // "Payment Mode": 'Unspecified',
     },
   })
@@ -42,7 +42,7 @@ export const UdlForm = () => {
     return (
       <FormItem className="pt-8">
         <FormLabel>{title}</FormLabel>
-        <Select onValueChange={field.onChange} defaultValue={field.value}>
+        <Select onValueChange={field.onChange} value={field.value}>
           <FormControl>
             <SelectTrigger>
               <SelectValue />
