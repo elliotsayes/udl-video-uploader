@@ -5,12 +5,14 @@ import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
 
 interface Props {
   title: string;
+  subtitle?: string;
   hasFile: boolean;
   onFile: (file: File) => void;
   onClear: () => void;
@@ -20,7 +22,7 @@ interface Props {
 
 
 export const VideoUpload = (props: Props) => {
-  const { title, hasFile, onFile, onClear, previewUrl, disabled } = {
+  const { title, subtitle, hasFile, onFile, onClear, previewUrl, disabled } = {
     disabled: false,
     ...props,
   };
@@ -37,8 +39,6 @@ export const VideoUpload = (props: Props) => {
   const {
     getRootProps,
     getInputProps,
-    // rootRef,
-    // inputRef,
     open,
     isDragActive,
   } = useDropzone({
@@ -57,7 +57,9 @@ export const VideoUpload = (props: Props) => {
       <input {...getInputProps()} />
       <CardHeader>
         <CardTitle>{title}</CardTitle>
-        {/* <CardDescription>Card Description</CardDescription> */}
+        {
+          subtitle && <CardDescription>{subtitle}</CardDescription>
+        }
       </CardHeader>
       <CardContent className="relative flex flex-col items-center">
         <div className="absolute w-72 z-20">
