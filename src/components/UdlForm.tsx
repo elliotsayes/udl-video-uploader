@@ -6,36 +6,50 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { ResetIcon } from "@radix-ui/react-icons"
 
-export const UdlForm = () => {
+interface Props {
+  onSubmit: (values: z.infer<typeof zUdlInputSchema>) => void
+  initialValues?: Partial<z.infer<typeof zUdlInputSchema>>
+}
+
+const defaultValues: z.infer<typeof zUdlInputSchema> = {
+  Derivations: "Unspecified",
+  "Commercial Use": "Unspecified",
+  "License Type": "Unspecified",
+  "License Fee Value": "",
+  "License Fee Currency": "$U",
+  "Revenue Share Percentage": "",
+  Expires: "",
+  "Payment Address": "",
+  // "Payment Mode": 'Unspecified',
+}
+
+export const UdlForm = (props: Props) => {
+  const { onSubmit, initialValues } = props
+
   const form = useForm<z.infer<typeof zUdlInputSchema>>({
     resolver: zodResolver(zUdlInputSchema),
     defaultValues: {
-      Derivations: "Unspecified",
-      "Commercial Use": "Unspecified",
-      "License Type": "Unspecified",
-      "License Fee Value": "",
-      "License Fee Currency": "$U",
-      "Revenue Share Percentage": "",
-      Expires: "",
-      "Payment Address": "",
-      // "Payment Mode": 'Unspecified',
+      ...defaultValues,
+      ...initialValues,
     },
   })
 
   const [isRevenueShare, setIsRevenueShare] = useState(false)
   const [isLicense, setIsLicense] = useState(false)
 
-  form.watch((value) => {
+  const setup = useCallback((value: Partial<z.infer<typeof zUdlInputSchema>>) => {
     value["Derivations"] === 'Allowed-With-RevenueShare' ? setIsRevenueShare(true) : setIsRevenueShare(false)
     value["License Type"] !== "Unspecified" ? setIsLicense(true) : setIsLicense(false)
-  })
+  }, [])
 
-  function onSubmit(values: z.infer<typeof zUdlInputSchema>) {
-    console.log(values)
-  }
+  useEffect(() => {
+    setup(form.getValues())
+  }, [form, setup]);
+
+  form.watch((value) => setup(value))
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const renderSelect = (field: any, title: string, description: string, options: string[], firstOption?: string) => {
@@ -67,11 +81,11 @@ export const UdlForm = () => {
       </FormItem>
     )
   }
-  
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
-        <div className="flex flex-col">
+        <div className="flex flex-col px-2">
           <div className="flex flex-col md:flex-row md:gap-8">
             <FormField
               control={form.control}
@@ -182,7 +196,7 @@ export const UdlForm = () => {
               variant={"default"}
               size={"lg"}
             >
-              Submit
+              Save
             </Button>
             <Button
               onClick={() => form.reset()}
