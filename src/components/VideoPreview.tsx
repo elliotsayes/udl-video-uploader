@@ -17,13 +17,13 @@ export const VideoPreview = (props: Props) => {
         url ? (
           <video
             src={url} 
-            className={`absolute w-full h-full aspect-video object-cover ${(controls !== true) ? 'opacity-60' : ''}`}
+            className={`absolute w-full h-full aspect-video object-cover ${(controls !== true) ? 'opacity-60 blur-[1px]' : ''}`}
             muted
             controls={controls}
             autoPlay={controls}
           />
         ) : (
-          <div className="absolute w-full h-full aspect-video opacity-40 bg-gray-200" />
+          <div className="absolute w-full h-full aspect-video opacity-40 bg-primary" />
         )
       }
       { 

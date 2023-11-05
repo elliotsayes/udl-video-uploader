@@ -65,7 +65,7 @@ export const VideoUpload = (props: Props) => {
         <div className="absolute w-72 z-20">
           {
             !disabled && (
-              <div className="text-center text-secondary-foreground/80 bg-gradient-radial from-gray-800/40 via-gray-800/10 to-transparent px-4 py-[4.25rem]">
+              <div className="text-center text-[#C9CDCF]/90 font-semibold bg-gradient-radial from-primary/20 via-primary/5 to-transparent px-4 py-[4.25rem]">
                 {
                   isDragActive ?
                     <p>Drop video here!</p> :
