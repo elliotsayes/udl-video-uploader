@@ -36,6 +36,9 @@ const meta = {
       },
     },
   },
+  args: {
+    title: "Upload Video",
+  }
 } satisfies Meta<typeof VideoUpload>;
 
 export default meta;

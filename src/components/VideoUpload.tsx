@@ -1,9 +1,16 @@
 import { useCallback } from "react";
 import { useDropzone } from "react-dropzone"
 import { VideoPreview } from "./VideoPreview";
-import { Button } from "./ui/button";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
 
 interface Props {
+  title: string;
   hasFile: boolean;
   onFile: (file: File) => void;
   onClear: () => void;
@@ -11,8 +18,9 @@ interface Props {
   disabled?: boolean;
 }
 
+
 export const VideoUpload = (props: Props) => {
-  const { hasFile, onFile, onClear, previewUrl, disabled } = {
+  const { title, hasFile, onFile, onClear, previewUrl, disabled } = {
     disabled: false,
     ...props,
   };
@@ -45,11 +53,13 @@ export const VideoUpload = (props: Props) => {
   });
 
   return (
-    <div {...getRootProps({
-      className: "relative flex flex-col items-center"
-    })}>
+    <Card {...getRootProps()}>
       <input {...getInputProps()} />
-      {/* <div> */}
+      <CardHeader>
+        <CardTitle>{title}</CardTitle>
+        {/* <CardDescription>Card Description</CardDescription> */}
+      </CardHeader>
+      <CardContent className="relative flex flex-col items-center">
         <div className="absolute w-72 z-20">
           {
             !disabled && (
@@ -73,22 +83,25 @@ export const VideoUpload = (props: Props) => {
           url={previewUrl}
           darken={isDragActive && !disabled}
         />
-      {/* </div> */}
-      <div className="h-12 pt-2">
-        {
-          !disabled && (
-            hasFile ? (
-              <Button variant={"destructive"} size={"sm"} onClick={onClear}>
-                Clear
-              </Button>
-            ) : (
-              <Button variant={'secondary'} size={"sm"} onClick={open}>
-                Select File
-              </Button>
+        <div className="h-12 pt-2">
+          {
+            !disabled && (
+              hasFile ? (
+                <Button variant={"destructive"} size={"sm"} onClick={onClear}>
+                  Clear
+                </Button>
+              ) : (
+                <Button variant={'secondary'} size={"sm"} onClick={open}>
+                  Select File
+                </Button>
+              )
             )
-          )
-        }
-      </div>
-    </div>
+          }
+        </div>
+      </CardContent>
+      {/* <CardFooter>
+        <p>Card Footer</p>
+      </CardFooter> */}
+    </Card>
   )
 }
