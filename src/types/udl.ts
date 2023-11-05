@@ -18,7 +18,7 @@ export const zRevenueSharePercentage = z
 
 export const zCommercialUse = z.enum(["Allowed", "Allowed-With-Credit"]);
 
-export const zLicenseType = z.enum(["Monthly", "One Time"]);
+export const zLicenseType = z.enum(["Monthly", "One-Time"]);
 
 export const zLicenseFeeValue = z.number().gt(0, {
   message: "Must be greater than 0",

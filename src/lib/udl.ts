@@ -15,7 +15,7 @@ export const udlConfigToTags = (
   }
 
   if (config["Commercial Use"] !== "Unspecified") {
-    tags["Commercial Use"] = config["Commercial Use"];
+    tags["Commercial-Use"] = config["Commercial Use"];
   }
 
   if (config["License Type"] !== "Unspecified") {
@@ -32,7 +32,7 @@ export const udlConfigToTags = (
       config["License Type"] !== "Unspecified") &&
     zPaymentAddress.safeParse(config["Payment Address"]).success
   ) {
-    tags["Payment Address"] = config["Payment Address"];
+    tags["Payment-Address"] = config["Payment Address"];
   }
 
   if (zExpires.safeParse(config.Expires).success) {
