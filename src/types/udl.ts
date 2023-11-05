@@ -10,10 +10,10 @@ export const zDerivations = z.enum([
 export const zRevenueSharePercentage = z
   .number()
   .gt(0, {
-    message: "Revenue share must be greater than 0",
+    message: "Must be greater than 0",
   })
   .max(100, {
-    message: "Revenue share may not be greater than 100",
+    message: "Must not be greater than 100",
   });
 
 export const zCommercialUse = z.enum(["Allowed", "Allowed-With-Credit"]);
@@ -21,7 +21,7 @@ export const zCommercialUse = z.enum(["Allowed", "Allowed-With-Credit"]);
 export const zLicenseType = z.enum(["Monthly", "One Time"]);
 
 export const zLicenseFeeValue = z.number().gt(0, {
-  message: "License fee must be greater than 0",
+  message: "Must be greater than 0",
 });
 
 export const zLicenseFeeCurrency = z.enum(["AR"]);
@@ -29,14 +29,14 @@ export const zLicenseFeeCurrency = z.enum(["AR"]);
 export const zExpires = z
   .number()
   .int({
-    message: "Expires must be a whole number of years",
+    message: "Must be a whole number of years",
   })
   .gt(0, {
-    message: "Expires must be greater than 0",
+    message: "Must be greater than 0",
   });
 
 export const zPaymentAddress = z.string().min(1, {
-  message: "Payment address cannot be empty",
+  message: "Cannot be empty",
 });
 
 export const zPaymentMode = z.enum([
@@ -64,24 +64,27 @@ export const zUdlInputSchema = z
     "Payment Address": z.union([z.string().length(0), zPaymentAddress]),
     // "Payment Mode": z.union([zUnspecified, zPaymentMode]),
   })
-  .refine(
-    (data) =>
-      !(
-        data["Derivations"] === "Allowed-With-RevenueShare" &&
-        typeof data["Revenue Share Percentage"] != "number"
-      ),
-    {
-      message:
-        "RevenueShare Percentage is required when derivation is Allowed-With-RevenueShare",
+  .superRefine((values, context) => {
+    if (
+      values["Derivations"] === "Allowed-With-RevenueShare" &&
+      typeof values["Revenue Share Percentage"] != "number"
+    ) {
+      context.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Required field",
+        path: ["Revenue Share Percentage"],
+      });
     }
-  )
-  .refine(
-    (data) =>
-      !(
-        data["License Type"] !== "Unspecified" &&
-        typeof data["License Fee Value"] != "number"
-      ),
-    {
-      message: "Must have License Fee Value when License Type is set",
+  })
+  .superRefine((values, context) => {
+    if (
+      values["License Type"] !== "Unspecified" &&
+      typeof values["License Fee Value"] != "number"
+    ) {
+      context.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Required field",
+        path: ["License Fee Value"],
+      });
     }
-  );
+  });

@@ -67,9 +67,7 @@ export const UdlForm = () => {
       </FormItem>
     )
   }
-
-  const rootErrorMessage = form.formState.errors[""]?.["message"] as string | undefined;
-
+  
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -125,7 +123,7 @@ export const UdlForm = () => {
                 <FormItem className="pt-8">
                   <FormLabel>License Fee Value</FormLabel>
                   <FormControl>
-                    <Input placeholder="10" {...field} />
+                    <Input placeholder="0.1" {...field} />
                   </FormControl>
                   <FormDescription>
                     Value of currency required
@@ -143,7 +141,7 @@ export const UdlForm = () => {
                 <FormItem>
                   <FormLabel>Payment Address</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <Input placeholder={"vLRHFq..."} {...field} />
                   </FormControl>
                   <FormDescription>
                     Optional, uses your wallet address if not specified.
@@ -174,12 +172,7 @@ export const UdlForm = () => {
               </FormItem>
             )}
           />
-          <div className="my-4 h-4">
-            <FormMessage>
-              {rootErrorMessage}
-            </FormMessage>
-          </div>
-          <div className="flex flex-row justify-between items-center gap-4">
+          <div className="pt-8 flex flex-row justify-between items-center gap-4">
             <Button
               size={"icon"}
               className="invisible"
