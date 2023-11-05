@@ -61,7 +61,7 @@ export const UdlForm = () => {
           </SelectContent>
         </Select>
         <FormDescription>
-          You can manage email addresses...
+          {description}
         </FormDescription>
         <FormMessage />
       </FormItem>
@@ -78,7 +78,7 @@ export const UdlForm = () => {
             <FormField
               control={form.control}
               name={"Derivations"}
-              render={({ field }) => renderSelect(field, 'Derivations', '<description>', zDerivations.options, 'Unspecified')}
+              render={({ field }) => renderSelect(field, 'Derivations', 'Rights to make derivative works', zDerivations.options, 'Unspecified')}
             />
             <div className={`flex ${isRevenueShare ? 'h-32 pt-8 opacity-100' : 'h-0 opacity-0 overflow-hidden'} transition-all duration-200`}>
               <FormField
@@ -94,7 +94,7 @@ export const UdlForm = () => {
                       </div>
                     </FormControl>
                     <FormDescription>
-                      This is your public display name.
+                      Revenue from derivations
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -105,14 +105,19 @@ export const UdlForm = () => {
           <FormField
             control={form.control}
             name={"Commercial Use"}
-            render={({ field }) => renderSelect(field, 'Commercial Use', '<desc>', zCommercialUse.options, 'Unspecified')}
+            render={({ field }) => renderSelect(field, 'Commercial Use', 'Terms required for commercial use', zCommercialUse.options, 'Unspecified')}
           />
           <FormField
             control={form.control}
             name={"License Type"}
-            render={({ field }) => renderSelect(field, 'License Type', '<description>', zLicenseType.options, 'Unspecified')}
+            render={({ field }) => renderSelect(field, 'License Type', 'Required payment terms for licensing the content', zLicenseType.options, 'Unspecified')}
           />
           <div className={`flex flex-col md:flex-row md:gap-8 ${isLicense ? 'h-72 md:h-36 opacity-100' : 'h-0 opacity-0 overflow-hidden'} transition-all duration-200`}>
+            <FormField
+              control={form.control}
+              name={"License Fee Currency"}
+              render={({ field }) => renderSelect(field, 'License Fee Currency', 'Type of currency required', zLicenseFeeCurrency.options, '$U')}
+            />
             <FormField
               control={form.control}
               name={"License Fee Value"}
@@ -123,16 +128,11 @@ export const UdlForm = () => {
                     <Input placeholder="10" {...field} />
                   </FormControl>
                   <FormDescription>
-                    This is your public display name.
+                    Value of currency required
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
-            />
-            <FormField
-              control={form.control}
-              name={"License Fee Currency"}
-              render={({ field }) => renderSelect(field, 'License Fee Currency', '<description>', zLicenseFeeCurrency.options, '$U')}
             />
           </div>
           <div className={`${isRevenueShare || isLicense ? 'h-36 pt-8 opacity-100' : 'h-0 opacity-0 overflow-hidden'} transition-all duration-200`}>
@@ -143,7 +143,7 @@ export const UdlForm = () => {
                 <FormItem>
                   <FormLabel>Payment Address</FormLabel>
                   <FormControl>
-                    <Input placeholder="0cQJ..." {...field} />
+                    <Input {...field} />
                   </FormControl>
                   <FormDescription>
                     Optional, uses your wallet address if not specified.
@@ -163,12 +163,12 @@ export const UdlForm = () => {
             name={"Expires"}
             render={({ field }) => (
               <FormItem className="pt-8">
-                <FormLabel>Expires</FormLabel>
+                <FormLabel>Expiry (years)</FormLabel>
                 <FormControl>
                   <Input placeholder="5" {...field} />
                 </FormControl>
                 <FormDescription>
-                  Number of years the license is valid for (optional)
+                  Number of years until the license expires (optional)
                 </FormDescription>
                 <FormMessage />
               </FormItem>
