@@ -14,13 +14,26 @@ import { ScrollArea } from "@radix-ui/react-scroll-area"
 import { UdlTable } from "./UdlTable"
 import { useMachine } from "@xstate/react"
 import { uploadPageMachine } from "@/machines/upload_page"
+import { loadEverpayTokens } from "@/lib/everpay"
+import { Dialog } from "@/components/ui/dialog"
+import { EverpayDialog } from "./EverpayDialog"
+import { SubmittingDialog } from "./SubmittingDialog"
+
 
 export const UploadPage = () => {
   const [current, send] = useMachine(
     () => uploadPageMachine({}),
+    {
+      services: {
+        loadEverpayTokens: async () => ({
+          everpayTokens: await loadEverpayTokens(),
+        }),
+      }
+    }
   )
 
   const [isUdlSheetOpen, setIsUdlSheetOpen] = useState(false)
+  const [isSubmitDialogOpen, setIsSubmitDialogOpen] = useState(false)
 
   return (
     <div className="max-h-screen overflow-y-scroll px-2 sm:px-8">
@@ -97,13 +110,11 @@ export const UploadPage = () => {
           </Card>
           <Button
             size={"lg"}
-            onClick={function (): void {
-              console.error("Function not implemented.")
-            }}
-            className={`mx-auto ${current.can("submit config") && current.matches('configuring.udlConfig.hasConfig') ? 'animate-pulse' : ''}`}
-            disabled={!current.can("submit config")}
+            onClick={() => setIsSubmitDialogOpen(true)}
+            className={`mx-auto ${current.can({ type: "confirm symbol", data: { symbol: "AR" } }) && current.matches('configuring.udlConfig.hasConfig') ? 'animate-pulse' : ''}`}
+            disabled={!current.can({ type: "confirm symbol", data: { symbol: "AR" } })}
           >
-            Upload With Arseeding
+            Upload With Everpay
           </Button>
         </CardContent>
       </Card>
@@ -139,6 +150,31 @@ export const UploadPage = () => {
           </ScrollArea>
         </SheetContent>
       </Sheet>
+      <Dialog
+        open={isSubmitDialogOpen}
+        onOpenChange={(isOpen) => {
+          if(current.matches('submitting')) {
+            console.log('NO')
+          } else {
+            setIsSubmitDialogOpen(isOpen)
+          }
+        }}
+        modal={true}
+      >
+        {
+          current.matches('configuring') && current.context.everpayTokens !== undefined && (
+            <EverpayDialog 
+              symbols={current.context.everpayTokens.map((token) => token.symbol)}
+              onSubmit={(symbol) => send({ type: 'confirm symbol', data: { symbol } })}      
+            />
+          )
+        }
+        {
+          current.matches('submitting') && (
+            <SubmittingDialog />
+          )
+        }
+      </Dialog>
     </div>
   )
 }

@@ -2,6 +2,7 @@ import { udlConfigToTags } from "@/lib/udl";
 import { zUdlInputSchema } from "@/types/udl";
 import { assign, createMachine } from "xstate";
 import { z } from "zod";
+import { Token } from "everpay";
 
 type Events =
   | {
@@ -32,7 +33,13 @@ type Events =
       type: "udl config cleared";
     }
   | {
-      type: "submit config";
+      type: "assign everypay tokens";
+    }
+  | {
+      type: "confirm symbol";
+      data: {
+        symbol: string;
+      };
     };
 
 type Context = {
@@ -42,6 +49,15 @@ type Context = {
   trailerVideoUrl?: string;
   udlConfig?: z.infer<typeof zUdlInputSchema>;
   udlTags?: Record<string, string>;
+  everpayTokens?: Token[];
+};
+
+type Services = {
+  loadEverpayTokens: {
+    data: {
+      everpayTokens: Token[];
+    };
+  };
 };
 
 type Deps = {
@@ -52,12 +68,14 @@ type Deps = {
 export const uploadPageMachine = (deps: Deps) =>
   createMachine(
     {
-      /** @xstate-layout N4IgpgJg5mDOIC5QFcAOAbA9gQwgBWxgDoBLAOxIBcTt0BiAbQAYBdRUVTWKkzM9kAA9EAWgAcAFiJiAjEwDsATnkyxAZmVMAbABoQAT1EyiTJmq3mArAsUStlgEwSZAXxd60WXAWIBjPgBmJFDIAE7kUEQAttjkAGokEGCYdDHkAAQAbonJ6bBglMxsSCCc3NR8AsIIDpbGEg72EgoOTDKKMvIOeoYIMlryRLUd8g0yDmIO8pZabh4YOPiEYET+ZEEh4WSRaWQJSZhEABbYsPvJqbFkWTmY6b7oYNihkEUCZTyVJdVOg9Na7TEbUsEkUaks8h6iDUdiIckcdQkEMUijE8jmIE8ix8KzWGzCESIlFCsUeoXOKWJpLAoRuBzyBTeJQ+FX430QtSYRGctja4wcTlREihCEssiI8kmTDEQM6aKUGKx3mWq0CwQJ2yJJJIZIpx1OFLoVJ1NLpuQeTxeECZHC4nzZoB+oKIKK66g0TEUCghIumahM1jMHRkEjEWgUioWyr8as2hOQEHQAGFY3QE+h7rGGYVWO87ayqhyNCYATMZkCzA4YSKUVIHCGwZNzPYHJGvEsY+t1VtIumU13IidYP2NmnE5mB-dHs9XrnmfneA6hEWuXYZGozJY6jId40RTuLC7LF7GiDTEK29iVXjuxE6LBkAAjKJUCcbG2lBdfR2ILRhohqLUG5mO0MwaCKWgAeG8jmA0bSAdKlhuO4IBkJgSTwCUSodmAeblIuhYICIThcuoCijM4aiTHI3QGKIYImA0MpghIdgCgMl7RrisYalAeH2oRSLcvIpgDGoVEAqGtQiiIlgSu0ihgQ4qJutKnE4aQFDULQ-EFuyRHtA40gbvIFHrtRTC0b0xHGRY9YggCAIwuY6k4qqA68dEVwUrpBH6QxEgidoMESSG6gikCEpaIoWhVspylis4rnXjxPZatS5K3L537LggKIAQeQasUidiWCKoJyfFSKqI4ilTMlnb4mlfaxtlS7VIp0hMBC262PWrS6HReUKBKQH2YBdSSA13EeWlux6mhPnzvhOXVCG9RBWJoWhmoIqNIMAqsZZynyFoEgbkhKHYW5N5xpq823PqZxZctAn6edckyGBkhAmIgZMMKQ0TMYqLqB05g1QDsxXVGGkPs+VDUNsbWEadcmiWIjbaHYYI1nJoIhWMqLHmo03uU1hLGrqj2LS9tore1iAhoMaiFRoxUOWVQ1-ooJieloAumV0tiuDD7Y3allPatTBxPUt9NvT+CANLzrOhmG0pgnUtgQZjfMxYLpnKRoZO3Z5LUDkQaEjsEKP6SG-pAj1O59eM2j7vzRCxa0igTKYIJJWLV6NbemoWxsT023xr16UrahKHz9bnUiW6mfHHsxV7Aqen73WsaLbhAA */
+      /** @xstate-layout N4IgpgJg5mDOIC5QFcAOAbA9gQwgBWxgDoBjTAOwDMBLKZAJ2vKgGJZkAjAW2oBcACMlVoBtAAwBdRKFSZYfahWkgAHogCcADgBMRAMwBGAOwA2MdoCsRnXvUAWADQgAnogC0ui2LvbNBsXpiBibahnYAvuFOaFi4BMRCNHSMzERc2EwAatQQYJgs6Uz8AG45efywYLziUkggsvK8iuTKagiWBkQ+JhZ2YkbaQerG2k6uCMFGRJbDRj4GvtpGFiaR0Rg4+IRgpBRJDExQaRnk2bmYRAAW2LBneQUnJWWYguhg2PSQNcoNCkp1bW0dimyxMBi0QV66j0VjGiD0dhMRH8Fg6dis6i0RjWIBim3iO0StAOqV49Ayb3od3yZIpYHoT3OFSq3zqvya-1AgK8XXBfQMC20QK0jhciAsfiI1kGmk0QWsRiM6hxeLi212wmShyItOolOpVxu1JYuspjPKJDeHy+kh+cj+LQBiGFRExA00elsYnU-VhYoQyz0RDEXgCwwMdk0ZmxUVxGzVCT2xJSR2QEHQAGEk6w0+hBNnmdVbWz7RzHVznbZg2CVis5QFQqLxpi7NMI9CbCYetoVfGtonNSTU+ms5rDbBR0kWLn85rXu9PhBWTJS81WpWxF0wYEYRYBQLtCY4RNgkH1BYfYfemJvZoIrHVf3Cdmh0QwMV6ahsM4iJQ6RAWBUWBeGwXgdmwSgwPoAAKfwbwASmnPsCQ1fYUzfD96C-H8-z1G1ahXRo1ydBBPSmTR1DmLtLDEEwjGCJtEGCBZqzvPpZTlTRe1iJ9UOTbV30-b8iByN5AOA0DwMg+lYIQpCeJQoktVSQSsOE0SwGXepV05VQmLmIhek42igVogw72PCMAn0PQlnoux1G0Aw9BjdYFPVJTX1U7CiB4w4WAgCgdiYYpMAAax2R9FJfdDvOEvzmAQELMBIUDmhqLT2WIisEC8TRpk0awTHRByVmKixLLsdFgzEOUIyFeULAsbj8Q8mKBMwnyEtYel6EwegiAwUDKH6rgiCitrB1izr4s2Q4kvIULUrLDLi0Ih111yoIpVMb1u2MH0o0sqwgz3HRaovVFFXvNzWuIJgFGwdAWEynTyz0hA3DvIg-H6SjzNsIxaOPNxOhvPQTAhrwlURVE7AMSJY3ITBcngOoJpgO0iN0toPD6H7Amu+G9B0fxRn9Nx7Clb0mv6cyejKlqE2fKbDixjaSOq4Ebzoz0owjHQKopqYSa7Ow+dsCxPRWJneM89DClOZ52bLTboS6IHaKMPmwUjPRjyVV0IcsPcTCjQZzFl6LWdSRWDWR6kVeyj6I06bmtZ1gX9f9Q8piFKrzG0SjisCZqH2Qya0O1O3nnHR2S2x962nFixkRWEnIwum9vGPXxOi0D1hgh8yvERK3I-40lyTwqllYTjmcsxfQBTMWwqpKnpjwc1t0WGPc+nsBZgXLgco6rula-OIgHbr9bVZIiMRZbsN296Tv-TN9QavULs6MVIP4ZHlmx6OU16QNa5bln7TE82nwt7CWUzAomE+WPTft93xUBmhZVw-c0eldhyZmzE7HGGhU5yisHuPkTlBhHn9D6JEFELbBDzlGVY-87rHyAeNEc2Zp6YEnLQMBScmLix+iGZYAp7BwOBv6fwO8iAhEGI5esvRD5YOZnxZSwDiFHEvvw0hm0XJbxvE5cW6ImqKhcpZPazCGpsJvBwhGXC5btRUjNcYc9nZtHVmCAuxdETmUsoYJEN5MSMPPFIzBt1uHyw6kJHC-5hEkVrF0HeRUZTeAvJZHoW8KKoict6K8CIj48K8lo3ymxICuJyssfKgRzYGOlEESqPQfqYmGMVCiwIbpxgATg3hGEnEiXTGAOJLt4bMPBLKIxYJNCVUcswq6VVUSt0POEhxmjSndUqYCRE+h+jw0GFLCUfRybjAjCYLeoQ6qWFCHMTpaiUIPSaE9fp7hwS6A9P0OYxNSbmBBjsiGtkDBr2YgiCG4T2DcD4E0ZgmyJgmX0DM7cXZwTPwNkiYqwIzbeGKs5LsiNwhAA */
       id: "uploadPage",
       tsTypes: {} as import("./upload_page.typegen").Typegen0,
+      predictableActionArguments: true,
       schema: {
         context: {} as Context,
         events: {} as Events,
+        services: {} as Services,
       },
       context: {},
       initial: "initial",
@@ -88,6 +106,7 @@ export const uploadPageMachine = (deps: Deps) =>
                 },
               },
             },
+
             trailerVideo: {
               states: {
                 noVideo: {},
@@ -110,6 +129,7 @@ export const uploadPageMachine = (deps: Deps) =>
                 },
               },
             },
+
             udlConfig: {
               states: {
                 noConfig: {},
@@ -132,10 +152,40 @@ export const uploadPageMachine = (deps: Deps) =>
                 },
               },
             },
+
+            everpay: {
+              states: {
+                failed: {
+                  after: {
+                    "1000": "loading",
+                  },
+                },
+                loaded: {},
+                idle: {
+                  after: {
+                    "100": "loading",
+                  },
+                },
+                loading: {
+                  invoke: {
+                    src: "loadEverpayTokens",
+
+                    onDone: {
+                      target: "loaded",
+                      actions: "assignEverypayTokens",
+                    },
+
+                    onError: "failed",
+                  },
+                },
+              },
+
+              initial: "idle",
+            },
           },
 
           on: {
-            "submit config": {
+            "confirm symbol": {
               target: "submitting",
               cond: "canSubmitConfig",
             },
@@ -183,10 +233,16 @@ export const uploadPageMachine = (deps: Deps) =>
           udlConfig: undefined,
           udlTags: undefined,
         }),
+        assignEverypayTokens: assign({
+          everpayTokens: (_, event) => event.data.everpayTokens,
+        }),
       },
       guards: {
         canSubmitConfig: (context) => {
-          return context.mainVideo !== undefined;
+          return (
+            context.mainVideo !== undefined &&
+            context.everpayTokens != undefined
+          );
         },
       },
     }
