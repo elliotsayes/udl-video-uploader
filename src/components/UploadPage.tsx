@@ -100,7 +100,8 @@ export const UploadPage = () => {
             onClick={function (): void {
               console.error("Function not implemented.")
             }}
-            className={`mx-auto ${current.can("submit config") ? 'animate-pulse' : ''}`}
+            className={`mx-auto ${current.can("submit config") && current.matches('configuring.udlConfig.hasConfig') ? 'animate-pulse' : ''}`}
+            disabled={!current.can("submit config")}
           >
             Upload With Arseeding
           </Button>
