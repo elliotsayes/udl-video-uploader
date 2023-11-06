@@ -20,6 +20,7 @@ import { EverpayDialog } from "./EverpayDialog"
 import { SubmittingDialog } from "./SubmittingDialog"
 import { SubmitSuccessDialog } from "./SubmitSuccessDialog"
 import { uploadVideos } from "@/lib/upload"
+import { SubmitFailureDialog } from "./SubmitFailureDialog"
 
 export const UploadPage = () => {
   const [current, send] = useMachine(
@@ -184,6 +185,13 @@ export const UploadPage = () => {
             <SubmitSuccessDialog 
               mainVideoResult={current.context.mainVideoResult!}
               trailerVideoResult={current.context.trailerVideoResult}              
+            />
+          )
+        }
+        {
+          current.matches('upload failure') && (
+            <SubmitFailureDialog 
+              error={current.context.uploadError}         
             />
           )
         }
