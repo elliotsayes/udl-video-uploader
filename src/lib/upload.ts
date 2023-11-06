@@ -28,8 +28,8 @@ export const uploadVideos = async (
   const mainVideoResult = await uploadFile(instance, tag, mainVideo, {
     "Content-Type": mainVideo.type,
     ...udlTags,
-    ...(trailerVideoResult?.everHash
-      ? { Trailer: trailerVideoResult.everHash }
+    ...(trailerVideoResult !== undefined
+      ? { Trailer: trailerVideoResult.order.itemId }
       : {}),
   });
 
