@@ -39,7 +39,7 @@ export const udlConfigToTags = (
     tags["Expires"] = config.Expires.toString();
   }
 
-  console.log(config, tags);
+  console.log({ config, tags });
 
   return tags;
 };

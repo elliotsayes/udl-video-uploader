@@ -35,10 +35,10 @@ export const UploadPage = () => {
           send({ type: "update submitting", data: { message: "Starting upload process..." }})
 
           uploadVideos(mainVideo!, udlTags!, everpayTokens!, uploadSymbol!, (message) => send({ type: "update submitting", data: { message }}), trailerVideo).then((data) => {
-            console.log(data)
+            console.log({data})
             send({ type: 'upload success', data })
           }).catch((uploadError) => {
-            console.error(uploadError)
+            console.error({uploadError})
             send({ type: 'upload failed', data: { uploadError } })
           });
         }

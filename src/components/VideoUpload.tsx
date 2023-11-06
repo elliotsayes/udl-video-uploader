@@ -39,7 +39,6 @@ export const VideoUpload = (props: Props) => {
   }, [file])
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
-    console.log('onDrop', acceptedFiles);
     if (acceptedFiles.length === 1) {
       onFile(acceptedFiles[0]);
     } else {
