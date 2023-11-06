@@ -161,7 +161,7 @@ export const UploadPage = () => {
         </SheetContent>
       </Sheet>
       <Dialog
-        open={isSubmitDialogOpen || current.matches('submitting')}
+        open={isSubmitDialogOpen || current.matches('submitting') || current.matches('upload success') || current.matches('upload failure')}
         onOpenChange={setIsSubmitDialogOpen}
         modal={true}
       >
@@ -191,7 +191,7 @@ export const UploadPage = () => {
         {
           current.matches('upload failure') && (
             <SubmitFailureDialog 
-              error={current.context.uploadError}         
+              error={current.context.uploadError as Error}         
             />
           )
         }

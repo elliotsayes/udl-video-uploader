@@ -1,7 +1,7 @@
 import { DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 
 interface Props {
-  error: unknown;
+  error?: Error;
 }
 
 export const SubmitFailureDialog = (props: Props) => {
@@ -18,7 +18,7 @@ export const SubmitFailureDialog = (props: Props) => {
             <span className="text-xl">Error information:</span>
             <div className="max-h-[12rem] overflow-auto">
               <pre className="text-sm">
-                {JSON.stringify(error, null, 2)}
+                {error.message ?? JSON.stringify(error, null, 2)}
               </pre>
             </div>
           </>

@@ -5,7 +5,7 @@ interface Props {
 }
 
 export const SubmittingDialog = (props: Props) => {
-  const {submitLog} = props;
+  const { submitLog } = props;
 
   return (
     <DialogContent className="sm:max-w-[425px]" hasCloseButton={false}>
@@ -15,9 +15,11 @@ export const SubmittingDialog = (props: Props) => {
           Please wait while your data is uploading...
         </DialogDescription>
       </DialogHeader>
-      <pre>
-        {submitLog}
-      </pre>
+      <div className="max-h-[12rem] overflow-auto">
+        <pre className="text-sm">
+          {submitLog}
+        </pre>
+      </div>
     </DialogContent>
   )
 }
