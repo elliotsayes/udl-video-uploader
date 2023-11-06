@@ -153,9 +153,7 @@ export const UploadPage = () => {
       <Dialog
         open={isSubmitDialogOpen}
         onOpenChange={(isOpen) => {
-          if(current.matches('submitting')) {
-            console.log('NO')
-          } else {
+          if(!current.matches('submitting')) {
             setIsSubmitDialogOpen(isOpen)
           }
         }}

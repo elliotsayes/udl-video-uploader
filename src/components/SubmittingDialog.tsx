@@ -8,11 +8,11 @@ export const SubmittingDialog = (props: Props) => {
   const {status} = props;
 
   return (
-    <DialogContent className="sm:max-w-[425px]">
+    <DialogContent className="sm:max-w-[425px]" hasCloseButton={false}>
       <DialogHeader>
-        <DialogTitle>Submitting</DialogTitle>
+        <DialogTitle>Uploading with Everpay</DialogTitle>
         <DialogDescription>
-          Your data is uploading...
+          Please wait while your data is uploading...
         </DialogDescription>
       </DialogHeader>
       Submitting...
