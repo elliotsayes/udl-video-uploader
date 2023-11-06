@@ -12,7 +12,7 @@ export const uploadVideos = async (
 ) => {
   const tag = getSymbolFirstTag(everpayTokens, symbol)!;
 
-  update("Connecting to Arweave Wallet");
+  update("Connecting to Arweave Wallet...");
   const { instance, address } = await getInstance();
   update(`Connected to Arweave Wallet: ${address}`);
 
