@@ -3,14 +3,17 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useForm } from "react-hook-form";
+import { useCallback, useEffect, useState } from "react";
+import { getUploadFee } from "@/lib/arseeding";
 
 interface Props {
+  size: number
   symbols: string[]
   onSubmit: (symbol: string) => void
 }
 
 export const EverpayDialog = (props: Props) => {
-  const { symbols, onSubmit } = props;
+  const { size, symbols, onSubmit } = props;
   
   const form = useForm<{
     token: string
@@ -19,6 +22,26 @@ export const EverpayDialog = (props: Props) => {
       token: 'AR',
     },
   })
+
+  const [fee, setFee] = useState<number | undefined>(undefined);
+  const updateCost = useCallback(async (symbol: string) => {
+    setFee(undefined)
+    try {
+      const fee = await getUploadFee(size, symbol)
+      console.log({fee})
+      const parsed = parseInt(fee.finalFee) / (10 ** fee.decimals)
+      const rounded = Number(parsed.toPrecision(5))
+      setFee(rounded)
+    } catch (error) {
+      console.error(error)
+    }
+  }, [size]);
+
+  const tokenValue = form.getValues().token;
+
+  useEffect(() => {
+    updateCost(tokenValue)
+  }, [updateCost, tokenValue]);
 
   return (
     <DialogContent className="sm:max-w-[425px]">
@@ -56,7 +79,7 @@ export const EverpayDialog = (props: Props) => {
                   </SelectContent>
                 </Select>
                 <FormDescription>
-                  Select a token to use
+                  {`Upload cost: ${fee ?? '...'} ${tokenValue}`}
                 </FormDescription>
                 <FormMessage />
               </FormItem>

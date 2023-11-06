@@ -1,4 +1,4 @@
-import { genArweaveAPI } from "arseeding-js";
+import { genArweaveAPI, getBundleFee } from "arseeding-js";
 import { addressFromPublicKey } from "./arweave";
 import { GenArweaveAPIReturn } from "arseeding-js/cjs/types";
 
@@ -15,6 +15,21 @@ export type SendAndPayResult = {
     expectedBlock: number;
     tag: string;
   };
+};
+
+export type UploadFeeResult = {
+  currency: string;
+  decimals: number;
+  finalFee: string;
+};
+
+export const getUploadFee = async (
+  size: number,
+  symbol: string
+): Promise<UploadFeeResult> => {
+  const arseedingUrl = import.meta.env.VITE_CONFIG_ARSEEDING_URL;
+  const fee = await getBundleFee(arseedingUrl, size.toString(), symbol);
+  return fee;
 };
 
 export const getInstance = async () => {

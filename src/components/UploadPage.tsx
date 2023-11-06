@@ -168,6 +168,7 @@ export const UploadPage = () => {
         {
           current.matches('configuring') && current.context.everpayTokens !== undefined && (
             <EverpayDialog 
+              size={(current.context.trailerVideo?.size ?? 0) + (current.context.mainVideo?.size ?? 0)}
               symbols={current.context.everpayTokens.map((token) => token.symbol)}
               onSubmit={(symbol) => send({ type: 'confirm symbol', data: { symbol } })}      
             />
