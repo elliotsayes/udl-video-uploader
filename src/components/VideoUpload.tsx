@@ -76,7 +76,7 @@ export const VideoUpload = (props: Props) => {
           {
             !disabled && (
               (hasFile && !isDragActive) ? (
-                <div className="text-center bg-primary-foreground/60 rounded-lg max-w-[80%] px-1 py-2 mx-auto my-12">
+                <div className="text-center bg-primary-foreground/60 rounded-lg max-w-[80%] px-1 py-2 mx-auto my-6 sm:my-12">
                   <span className="line-clamp-1 text-ellipsis">
                     Name: <span>{file.name}</span>
                   </span>
