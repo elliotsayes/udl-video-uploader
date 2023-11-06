@@ -53,7 +53,7 @@ export const VideoUpload = (props: Props) => {
   });
 
   return (
-    <Card {...getRootProps()}>
+    <Card {...getRootProps()} className="flex-grow">
       <input {...getInputProps()} />
       <CardHeader>
         <CardTitle>{title}</CardTitle>
@@ -62,10 +62,10 @@ export const VideoUpload = (props: Props) => {
         }
       </CardHeader>
       <CardContent className="relative flex flex-col items-center">
-        <div className="absolute w-72 z-20">
+        <div className="absolute w-48 sm:w-72 z-20">
           {
             !disabled && (
-              <div className="text-center text-[#C9CDCF]/90 font-semibold bg-gradient-radial from-primary/20 via-primary/5 to-transparent px-4 py-[4.25rem]">
+              <div className="text-center text-[#C9CDCF]/90 font-semibold bg-gradient-radial from-primary/20 via-primary/5 to-transparent px-2 sm:px-4 py-[2.6rem] sm:py-[4.25rem]">
                 {
                   isDragActive ?
                     <p>Drop video here!</p> :

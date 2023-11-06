@@ -23,14 +23,14 @@ export const UploadPage = () => {
   const hasTags = Object.keys(udlTags).length > 0
 
   return (
-    <div>
-      <Card>
+    <div className="max-h-screen overflow-y-scroll px-2 sm:px-8">
+      <Card className="mx-auto max-w-3xl my-4 sm:my-8">
         <CardHeader>
           <CardTitle>Arseeding UDL Video Uploader</CardTitle>
           {/* <CardDescription>Card Description</CardDescription> */}
         </CardHeader>
-        <CardContent className="flex flex-col gap-4 items-center">
-          <div className="flex flex-col lg:flex-row gap-4">
+        <CardContent className="flex flex-col gap-4 items-stretch">
+          <div className="flex flex-col lg:flex-row gap-4 lg:justify-stretch">
             <VideoUpload
               title={"Main Video"}
               subtitle={"Select your main video"}
@@ -40,7 +40,7 @@ export const UploadPage = () => {
               }}
               onClear={function (): void {
                 console.error("Function not implemented.")
-              }} 
+              }}
             />
             <VideoUpload
               title={"Trailer"}
@@ -78,6 +78,7 @@ export const UploadPage = () => {
               }
               <div className="pt-4 flex flex-row gap-4">
                 <Button
+                  variant={"secondary"}
                   onClick={() => setIsUdlSheetOpen(true)}
                 >
                   {
@@ -105,6 +106,7 @@ export const UploadPage = () => {
             onClick={function (): void {
               console.error("Function not implemented.")
             }}
+            className={`mx-auto ${hasTags ? 'animate-pulse' : ''}`}
           >
             Upload With Arseeding
           </Button>

@@ -12,7 +12,7 @@ export const VideoPreview = (props: Props) => {
   };
 
   return (
-    <div className="relative aspect-video w-72 rounded-md overflow-hidden">
+    <div className="relative aspect-video w-48 sm:w-72 rounded-md overflow-hidden">
       {
         url ? (
           <video
