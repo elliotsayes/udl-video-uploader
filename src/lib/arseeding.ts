@@ -1,26 +1,42 @@
 import { genArweaveAPI } from "arseeding-js";
 import { addressFromPublicKey } from "./arweave";
+import { GenArweaveAPIReturn } from "arseeding-js/cjs/types";
 
-export const arseedingUploadFile = async (
+export type SendAndPayResult = {
+  everHash?: string;
+  order: {
+    itemId: string;
+    size: number;
+    bundler: string;
+    currency: string;
+    decimals: number;
+    fee: string;
+    paymentExpiredTime: number;
+    expectedBlock: number;
+    tag: string;
+  };
+};
+
+export const getInstance = async () => {
+  const instance = await genArweaveAPI(window.arweaveWallet);
+  const address = await addressFromPublicKey(instance.signer.publicKey);
+
+  return {
+    instance,
+    address,
+  };
+};
+
+export const uploadFile = async (
+  instance: GenArweaveAPIReturn,
   tag: string,
   file: File,
   tags: Record<string, string>
-) => {
-  const instance = await genArweaveAPI(window.arweaveWallet);
-  const address = await addressFromPublicKey(instance.signer.publicKey);
-  console.log({ instance, address });
-
+): Promise<SendAndPayResult> => {
   const arseedingUrl = import.meta.env.VITE_CONFIG_ARSEEDING_URL;
 
   const fileArrayBuffer = await file.arrayBuffer();
   const fileBuffer = Buffer.from(fileArrayBuffer);
-
-  // const chainType = 'arweave';
-  // const symbol = 'AR';
-  // const id = await addressFromPublicKey(instance.signer.publicKey)
-  // const tag = `${chainType}-${symbol}-${id}`;
-  // const tag =
-  //   "arweave,ethereum-ar-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,0x4fadc7a98f2dc96510e42dd1a74141eeae0c1543";
 
   const options = {
     tags: Object.entries(tags).map(([name, value]) => ({
@@ -38,5 +54,5 @@ export const arseedingUploadFile = async (
   );
 
   console.log({ sendAndPayResult });
-  return sendAndPayResult;
+  return sendAndPayResult as SendAndPayResult;
 };

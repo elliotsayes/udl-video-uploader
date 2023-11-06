@@ -1,11 +1,11 @@
 import { DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 
 interface Props {
-  status?: string
+  submitLog: string
 }
 
 export const SubmittingDialog = (props: Props) => {
-  const {status} = props;
+  const {submitLog} = props;
 
   return (
     <DialogContent className="sm:max-w-[425px]" hasCloseButton={false}>
@@ -15,8 +15,9 @@ export const SubmittingDialog = (props: Props) => {
           Please wait while your data is uploading...
         </DialogDescription>
       </DialogHeader>
-      Submitting...
-      {status}
+      <pre>
+        {submitLog}
+      </pre>
     </DialogContent>
   )
 }

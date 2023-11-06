@@ -18,7 +18,8 @@ import { loadEverpayTokens } from "@/lib/everpay"
 import { Dialog } from "@/components/ui/dialog"
 import { EverpayDialog } from "./EverpayDialog"
 import { SubmittingDialog } from "./SubmittingDialog"
-
+import { SubmitSuccessDialog } from "./SubmitSuccessDialog"
+import { uploadVideos } from "@/lib/upload"
 
 export const UploadPage = () => {
   const [current, send] = useMachine(
@@ -28,7 +29,19 @@ export const UploadPage = () => {
         loadEverpayTokens: async () => ({
           everpayTokens: await loadEverpayTokens(),
         }),
-      }
+        submitToEverpay: (context) => (send) => {
+          const { mainVideo, trailerVideo, udlTags, everpayTokens, uploadSymbol } = context;
+          send({ type: "update submitting", data: { message: "Starting upload process..." }})
+
+          uploadVideos(mainVideo!, udlTags!, everpayTokens!, uploadSymbol!, (message) => send({ type: "update submitting", data: { message }}), trailerVideo).then((data) => {
+            console.log(data)
+            send({ type: 'upload success', data })
+          }).catch((uploadError) => {
+            console.error(uploadError)
+            send({ type: 'upload failed', data: { uploadError } })
+          });
+        }
+      },
     }
   )
 
@@ -163,7 +176,17 @@ export const UploadPage = () => {
         }
         {
           current.matches('submitting') && (
-            <SubmittingDialog />
+            <SubmittingDialog
+              submitLog={current.context.submitLog}
+            />
+          )
+        }
+        {
+          current.matches('upload success') && (
+            <SubmitSuccessDialog 
+              mainVideoResult={current.context.mainVideoResult!}
+              trailerVideoResult={current.context.trailerVideoResult}              
+            />
           )
         }
       </Dialog>

@@ -23,18 +23,23 @@ export interface Typegen0 {
   };
   invokeSrcNameMap: {
     loadEverpayTokens: "done.invoke.uploadPage.configuring.everpay.loading:invocation[0]";
+    submitToEverpay: "done.invoke.uploadPage.submitting:invocation[0]";
   };
   missingImplementations: {
     actions: never;
     delays: never;
     guards: never;
-    services: "loadEverpayTokens";
+    services: "loadEverpayTokens" | "submitToEverpay";
   };
   eventsCausingActions: {
+    appendSubmitLog: "update submitting";
     assignEverypayTokens: "done.invoke.uploadPage.configuring.everpay.loading:invocation[0]";
     assignMainVideo: "main video set";
+    assignSendAndPayResult: "upload success";
     assignTrailerVideo: "trailer video set";
     assignUdlConfig: "udl config set";
+    assignUploadError: "upload failed";
+    assignUploadSymbol: "confirm symbol";
     clearMainVideo: "main video cleared";
     clearTrailerVideo: "trailer video cleared";
     udlConfigCleared: "udl config cleared";
@@ -47,6 +52,7 @@ export interface Typegen0 {
     loadEverpayTokens:
       | "xstate.after(100)#uploadPage.configuring.everpay.idle"
       | "xstate.after(1000)#uploadPage.configuring.everpay.failed";
+    submitToEverpay: "confirm symbol";
   };
   matchesStates:
     | "configuring"
@@ -66,6 +72,9 @@ export interface Typegen0 {
     | "configuring.udlConfig.noConfig"
     | "initial"
     | "submitting"
+    | "submitting.idle"
+    | "upload failure"
+    | "upload success"
     | {
         configuring?:
           | "everpay"
@@ -78,6 +87,7 @@ export interface Typegen0 {
               trailerVideo?: "hasVideo" | "noVideo";
               udlConfig?: "hasConfig" | "noConfig";
             };
+        submitting?: "idle";
       };
   tags: never;
 }
