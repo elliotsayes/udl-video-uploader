@@ -60,8 +60,7 @@ export const UploadPage = () => {
             <VideoUpload
               title={"Main Video"}
               subtitle={"Select your main video"}
-              hasFile={current.context.mainVideo !== undefined}
-              previewUrl={current.context.mainVideoUrl}
+              file={current.context.mainVideo}
               onFile={(mainVideo) => send({ type: 'main video set', data: { mainVideo } })}
               onClear={() => send({ type: 'main video cleared' })}
               disabled={!current.matches('configuring')}
@@ -69,8 +68,7 @@ export const UploadPage = () => {
             <VideoUpload
               title={"Trailer"}
               subtitle={"Select trailer video (optional)"}
-              hasFile={current.context.trailerVideo !== undefined}
-              previewUrl={current.context.trailerVideoUrl}
+              file={current.context.trailerVideo}
               onFile={(trailerVideo) => send({ type: 'trailer video set', data: { trailerVideo } })}
               onClear={() => send({ type: 'trailer video cleared' })}
               disabled={!current.matches('configuring')}

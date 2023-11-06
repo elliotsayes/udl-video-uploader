@@ -20,16 +20,6 @@ const meta = {
     onClear: {
       action: 'onClear',
     },
-    hasFile: {
-      control: {
-        type: 'boolean',
-      },
-    },
-    previewUrl: {
-      control: {
-        type: 'text',
-      },
-    },
     disabled: {
       control: {
         type: 'boolean',
@@ -47,27 +37,5 @@ type Story = StoryObj<typeof meta>;
 // More on writing stories with args: https://storybook.js.org/docs/react/writing-stories/args
 export const Waiting: Story = {
   args: {
-    hasFile: false,
-  }
-};
-
-export const HasFile: Story = {
-  args: {
-    hasFile: true,
-  }
-};
-
-export const HasFileWithPreview: Story = {
-  args: {
-    hasFile: true,
-    previewUrl: "https://ec7go7qzpxutxyogvudkkxxiuutnp46e62lzpbjeg2g3tu4rnq5q.arweave.net/IL5nfhl96Tvhxq0GpV7opSbX88T2l5eFJDaNudORbDs",
-  }
-};
-
-export const HasFileWithPreviewDisabled: Story = {
-  args: {
-    hasFile: true,
-    previewUrl: "https://ec7go7qzpxutxyogvudkkxxiuutnp46e62lzpbjeg2g3tu4rnq5q.arweave.net/IL5nfhl96Tvhxq0GpV7opSbX88T2l5eFJDaNudORbDs",
-    disabled: true,
   }
 };

@@ -64,9 +64,7 @@ type Events =
 
 type Context = {
   mainVideo?: File;
-  mainVideoUrl?: string;
   trailerVideo?: File;
-  trailerVideoUrl?: string;
   udlConfig?: z.infer<typeof zUdlInputSchema>;
   udlTags?: Record<string, string>;
   everpayTokens?: Token[];
@@ -270,27 +268,15 @@ export const uploadPageMachine = (deps: Deps) =>
       actions: {
         assignMainVideo: assign({
           mainVideo: (_, event) => event.data.mainVideo,
-          mainVideoUrl: (_, event) => URL.createObjectURL(event.data.mainVideo),
         }),
         clearMainVideo: assign({
           mainVideo: undefined,
-          mainVideoUrl: (context) => {
-            context.mainVideoUrl && URL.revokeObjectURL(context.mainVideoUrl);
-            return undefined;
-          },
         }),
         assignTrailerVideo: assign({
           trailerVideo: (_, event) => event.data.trailerVideo,
-          trailerVideoUrl: (_, event) =>
-            URL.createObjectURL(event.data.trailerVideo),
         }),
         clearTrailerVideo: assign({
           trailerVideo: undefined,
-          trailerVideoUrl: (context) => {
-            context.trailerVideoUrl &&
-              URL.revokeObjectURL(context.trailerVideoUrl);
-            return undefined;
-          },
         }),
         assignUdlConfig: assign({
           udlConfig: (_, event) => event.data.udlConfig,

@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone"
 import { VideoPreview } from "./VideoPreview";
 import { Button } from "@/components/ui/button";
@@ -9,23 +9,34 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
+import { filesize } from "filesize";
 
 interface Props {
   title: string;
   subtitle?: string;
-  hasFile: boolean;
+  file?: File;
   onFile: (file: File) => void;
   onClear: () => void;
-  previewUrl?: string;
   disabled?: boolean;
 }
 
 
 export const VideoUpload = (props: Props) => {
-  const { title, subtitle, hasFile, onFile, onClear, previewUrl, disabled } = {
+  const { title, subtitle, file, onFile, onClear, disabled } = {
     disabled: false,
     ...props,
   };
+  const hasFile = file !== undefined;
+
+  const [previewUrl, setPreviewUrl] = useState<string | undefined>(undefined)
+  
+  useEffect(() => {
+    const objectUrl = file ? URL.createObjectURL(file) : undefined;
+    setPreviewUrl(objectUrl)
+    return () => {
+      objectUrl && URL.revokeObjectURL(objectUrl)
+    };
+  }, [file])
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     console.log('onDrop', acceptedFiles);
@@ -65,19 +76,24 @@ export const VideoUpload = (props: Props) => {
         <div className="absolute w-48 sm:w-72 z-20">
           {
             !disabled && (
+              (hasFile && !isDragActive) ? (
+                <div className="text-center bg-primary-foreground/60 rounded-lg max-w-[80%] px-1 py-2 mx-auto my-12">
+                  <span className="line-clamp-1 text-ellipsis">
+                    Name: <span>{file.name}</span>
+                  </span>
+                  <span className="line-clamp-1 text-ellipsis">
+                    Size: <span>{filesize(file.size, {standard: "jedec"})}</span>
+                  </span>
+                </div>
+              ) : (
               <div className="text-center text-[#C9CDCF]/90 font-semibold bg-gradient-radial from-primary/20 via-primary/5 to-transparent px-2 sm:px-4 py-[2.6rem] sm:py-[4.25rem]">
                 {
                   isDragActive ?
                     <p>Drop video here!</p> :
-                    (
-                      hasFile ? (
-                        <p>Drop video to replace</p>
-                      ) : (
-                        <p>Drag & drop video file</p>
-                      )
-                    )
+                    <p>Drag & drop video file</p>
                 }
-              </div>
+                </div>
+              )
             )
           }
         </div>
