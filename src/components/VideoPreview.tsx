@@ -28,7 +28,7 @@ export const VideoPreview = (props: Props) => {
       }
       { 
         !controls && (
-          <div className={`absolute w-full h-full bg-gradient-to-b from-gray-800/50 to-gray-800 mix-blend-overlay ${darken ? '' : 'opacity-80'}`} />
+          <div className={`absolute w-full h-full bg-gradient-to-b from-gray-800/50 to-gray-800 mix-blend-overlay ${darken ? '' : 'opacity-20'}`} />
         )
       }
     </div>
