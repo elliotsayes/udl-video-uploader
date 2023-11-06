@@ -120,10 +120,8 @@ export const UploadPage = () => {
       </Card>
       <Sheet
         open={isUdlSheetOpen}
-        onOpenChange={(isOpen) => {
-          setIsUdlSheetOpen(isOpen)
-        }}
-        modal={false}
+        onOpenChange={setIsUdlSheetOpen}
+        modal={true}
       >
         <SheetContent
           side="bottom"
@@ -151,12 +149,8 @@ export const UploadPage = () => {
         </SheetContent>
       </Sheet>
       <Dialog
-        open={isSubmitDialogOpen}
-        onOpenChange={(isOpen) => {
-          if(!current.matches('submitting')) {
-            setIsSubmitDialogOpen(isOpen)
-          }
-        }}
+        open={isSubmitDialogOpen || current.matches('submitting')}
+        onOpenChange={setIsSubmitDialogOpen}
         modal={true}
       >
         {
