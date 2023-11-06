@@ -20,12 +20,14 @@ export const uploadVideos = async (
   if (trailerVideo !== undefined) {
     update("Uploading trailer video...");
     trailerVideoResult = await uploadFile(instance, tag, trailerVideo, {
+      "File-Name": trailerVideo.name,
       "Content-Type": trailerVideo.type,
     });
   }
 
   update("Uploading main video...");
   const mainVideoResult = await uploadFile(instance, tag, mainVideo, {
+    "File-Name": mainVideo.name,
     "Content-Type": mainVideo.type,
     ...udlTags,
     ...(trailerVideoResult !== undefined
