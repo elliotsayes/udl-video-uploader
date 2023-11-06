@@ -82,7 +82,7 @@ export const UploadPage = () => {
                   onClick={() => setIsUdlSheetOpen(true)}
                 >
                   {
-                    hasTags ? "Edit UDL" : "Add UDL"
+                    hasTags ? "Modify UDL" : "Add UDL"
                   }
                 </Button>
                 {
