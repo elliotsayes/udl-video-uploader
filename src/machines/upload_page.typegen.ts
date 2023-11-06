@@ -12,10 +12,42 @@ export interface Typegen0 {
     guards: never;
     services: never;
   };
-  eventsCausingActions: {};
+  eventsCausingActions: {
+    assignMainVideo: "main video set";
+    assignTrailerVideo: "trailer video set";
+    assignUdlConfig: "udl config set";
+    clearMainVideo: "main video cleared";
+    clearTrailerVideo: "trailer video cleared";
+    udlConfigCleared: "udl config cleared";
+  };
   eventsCausingDelays: {};
-  eventsCausingGuards: {};
+  eventsCausingGuards: {
+    canSubmitConfig: "submit config";
+  };
   eventsCausingServices: {};
-  matchesStates: "initialState";
+  matchesStates:
+    | "configuring"
+    | "configuring.mainVideo"
+    | "configuring.mainVideo.hasVideo"
+    | "configuring.mainVideo.noVideo"
+    | "configuring.trailerVideo"
+    | "configuring.trailerVideo.hasVideo"
+    | "configuring.trailerVideo.noVideo"
+    | "configuring.udlConfig"
+    | "configuring.udlConfig.hasConfig"
+    | "configuring.udlConfig.noConfig"
+    | "initial"
+    | "submitting"
+    | {
+        configuring?:
+          | "mainVideo"
+          | "trailerVideo"
+          | "udlConfig"
+          | {
+              mainVideo?: "hasVideo" | "noVideo";
+              trailerVideo?: "hasVideo" | "noVideo";
+              udlConfig?: "hasConfig" | "noConfig";
+            };
+      };
   tags: never;
 }

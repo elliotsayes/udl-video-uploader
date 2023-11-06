@@ -11,16 +11,16 @@ import { useState } from "react"
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet"
 import { UdlForm } from "./UdlForm"
 import { ScrollArea } from "@radix-ui/react-scroll-area"
-import { zUdlInputSchema } from "@/types/udl"
-import { z } from "zod"
 import { UdlTable } from "./UdlTable"
-import { udlConfigToTags } from "@/lib/udl"
+import { useMachine } from "@xstate/react"
+import { uploadPageMachine } from "@/machines/upload_page"
 
 export const UploadPage = () => {
+  const [current, send] = useMachine(
+    () => uploadPageMachine({}),
+  )
+
   const [isUdlSheetOpen, setIsUdlSheetOpen] = useState(false)
-  const [udlValues, setUdlValues] = useState<z.infer<typeof zUdlInputSchema> | undefined>(undefined)
-  const [udlTags, setUdlTags] = useState<Record<string, string>>({})
-  const hasTags = Object.keys(udlTags).length > 0
 
   return (
     <div className="max-h-screen overflow-y-scroll px-2 sm:px-8">
@@ -34,24 +34,20 @@ export const UploadPage = () => {
             <VideoUpload
               title={"Main Video"}
               subtitle={"Select your main video"}
-              hasFile={false}
-              onFile={function (file): void {
-                console.error("Function not implemented.", file)
-              }}
-              onClear={function (): void {
-                console.error("Function not implemented.")
-              }}
+              hasFile={current.context.mainVideo !== undefined}
+              previewUrl={current.context.mainVideoUrl}
+              onFile={(mainVideo) => send({ type: 'main video set', data: { mainVideo } })}
+              onClear={() => send({ type: 'main video cleared' })}
+              disabled={!current.matches('configuring')}
             />
             <VideoUpload
               title={"Trailer"}
               subtitle={"Select trailer video (optional)"}
-              hasFile={false}
-              onFile={function (file): void {
-                console.error("Function not implemented.", file)
-              }}
-              onClear={function (): void {
-                console.error("Function not implemented.")
-              }}
+              hasFile={current.context.trailerVideo !== undefined}
+              previewUrl={current.context.trailerVideoUrl}
+              onFile={(trailerVideo) => send({ type: 'trailer video set', data: { trailerVideo } })}
+              onClear={() => send({ type: 'trailer video cleared' })}
+              disabled={!current.matches('configuring')}
             />
           </div>
           <Card className="w-full">
@@ -70,9 +66,9 @@ export const UploadPage = () => {
             </CardHeader>
             <CardContent className="relative flex flex-col items-center">
               {
-                udlValues && (
+                current.matches("configuring.udlConfig.hasConfig") && (
                   <UdlTable
-                    tags={udlTags}
+                    tags={current.context.udlTags ?? {}}
                   />
                 )
               }
@@ -80,19 +76,17 @@ export const UploadPage = () => {
                 <Button
                   variant={"secondary"}
                   onClick={() => setIsUdlSheetOpen(true)}
+                  disabled={!current.matches('configuring')}
                 >
                   {
-                    hasTags ? "Modify UDL" : "Add UDL"
+                    current.matches("configuring.udlConfig.hasConfig") ? "Modify UDL" : "Add UDL"
                   }
                 </Button>
                 {
-                  hasTags && (
+                  current.matches("configuring.udlConfig.hasConfig") && (
                     <Button
                       variant={"destructive"}
-                      onClick={() => {
-                        setUdlValues(undefined)
-                        setUdlTags({})
-                      }}
+                      onClick={() => send({ type: 'udl config cleared' })}
                     >
                       Clear UDL
                     </Button>
@@ -106,7 +100,7 @@ export const UploadPage = () => {
             onClick={function (): void {
               console.error("Function not implemented.")
             }}
-            className={`mx-auto ${hasTags ? 'animate-pulse' : ''}`}
+            className={`mx-auto ${current.can("submit config") ? 'animate-pulse' : ''}`}
           >
             Upload With Arseeding
           </Button>
@@ -134,11 +128,9 @@ export const UploadPage = () => {
           <ScrollArea className="h-[60vh] w-full pr-4 overflow-y-auto">
             <div className="mx-auto max-w-screen-sm">
               <UdlForm
-                initialValues={udlValues}
-                onSubmit={function (data) {
-                  console.log(data);
-                  setUdlValues(data);
-                  setUdlTags(udlConfigToTags(data));
+                initialValues={current.context.udlConfig ?? {}}
+                onSubmit={(udlConfig) => {
+                  send({ type: 'udl config set', data: { udlConfig } })
                   setIsUdlSheetOpen(false);
                 }}
               />
