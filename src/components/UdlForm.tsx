@@ -92,7 +92,7 @@ export const UdlForm = (props: Props) => {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
-        <div className="flex flex-col px-2 gap-4">
+        <div className="flex flex-col px-2 py-4 gap-4">
           <div className={`flex flex-col md:flex-row gap-4 ${isRevenueShare ? 'h-60 md:h-32' : 'h-32'} transition-all duration-200`}>
             <FormField
               control={form.control}
