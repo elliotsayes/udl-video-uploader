@@ -54,8 +54,8 @@ export const UploadPage = () => {
   const [isSubmitDialogOpen, setIsSubmitDialogOpen] = useState(false)
 
   return (
-    <div className="max-h-screen overflow-y-scroll px-2 sm:px-8">
-      <Card className="mx-auto max-w-3xl my-4 sm:my-8">
+    <div>
+      <Card className="mx-auto max-w-md lg:max-w-3xl">
         <CardHeader>
           <CardTitle>Arseeding UDL Video Uploader</CardTitle>
           {/* <CardDescription>Card Description</CardDescription> */}
