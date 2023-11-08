@@ -19,7 +19,7 @@ import { Dialog } from "@/components/ui/dialog"
 import { EverpayDialog } from "./EverpayDialog"
 import { SubmittingDialog } from "./SubmittingDialog"
 import { SubmitSuccessDialog } from "./SubmitSuccessDialog"
-import { uploadVideos } from "@/lib/upload"
+import { uploadVideosToArseeding } from "@/lib/upload"
 import { SubmitFailureDialog } from "./SubmitFailureDialog"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 
@@ -36,7 +36,7 @@ export const UploadPage = () => {
           const log = (message: string) => send({ type: "update submitting", data: { message }})
           log("Starting upload process...")
 
-          uploadVideos(mainVideo!, everpayTokens!, uploadSymbol!, udlTags, trailerVideo, log).then((data) => {
+          uploadVideosToArseeding(mainVideo!, everpayTokens!, uploadSymbol!, udlTags, trailerVideo, log).then((data) => {
             console.log({data})
             send({ type: 'upload success', data })
           }).catch((uploadError) => {

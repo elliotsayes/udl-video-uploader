@@ -1,6 +1,7 @@
 import { genArweaveAPI, getBundleFee } from "arseeding-js";
 import { addressFromPublicKey } from "./arweave";
 import { GenArweaveAPIReturn } from "arseeding-js/cjs/types";
+import { config } from "@/config";
 
 export type SendAndPayResult = {
   everHash?: string;
@@ -27,7 +28,7 @@ export const getUploadFee = async (
   size: number,
   symbol: string
 ): Promise<UploadFeeResult> => {
-  const arseedingUrl = import.meta.env.VITE_CONFIG_ARSEEDING_URL;
+  const arseedingUrl = config.arseedingUrl;
   const fee = await getBundleFee(arseedingUrl, size.toString(), symbol);
   return fee;
 };
@@ -48,8 +49,6 @@ export const uploadFile = async (
   file: File,
   tags: Record<string, string>
 ): Promise<SendAndPayResult> => {
-  const arseedingUrl = import.meta.env.VITE_CONFIG_ARSEEDING_URL;
-
   const fileArrayBuffer = await file.arrayBuffer();
   const fileBuffer = Buffer.from(fileArrayBuffer);
 
@@ -60,6 +59,7 @@ export const uploadFile = async (
     })),
   };
 
+  const arseedingUrl = config.arseedingUrl;
   console.log({ arseedingUrl, tag, options });
   const sendAndPayResult = await instance.sendAndPay(
     arseedingUrl,

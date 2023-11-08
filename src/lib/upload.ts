@@ -17,7 +17,7 @@ const discoverabilityTags = (title: string) => ({
   Description: "Arseeding UDL Video Uploader",
 });
 
-export const uploadVideos = async (
+export const uploadVideosToArseeding = async (
   mainVideo: File,
   everpayTokens: Token[],
   symbol: string,

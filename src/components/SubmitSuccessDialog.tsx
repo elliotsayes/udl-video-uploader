@@ -2,6 +2,7 @@ import { DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog
 import { SendAndPayResult } from "@/lib/arseeding";
 import { VideoPreview } from "./VideoPreview";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { config } from "@/config";
 
 interface Props {
   mainVideoResult: SendAndPayResult;
@@ -12,7 +13,7 @@ export const SubmitSuccessDialog = (props: Props) => {
   const { mainVideoResult, trailerVideoResult } = props;
 
   const renderResult = (title: string, result: SendAndPayResult) => {
-    const url = `${import.meta.env.VITE_CONFIG_ARSEEDING_URL}/${result.order.itemId}`;
+    const url = `${config.arseedingUrl}/${result.order.itemId}`;
     
     return (
       <Card>
