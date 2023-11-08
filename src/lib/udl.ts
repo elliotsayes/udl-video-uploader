@@ -10,6 +10,16 @@ export const udlConfigToTags = (
     License: udlLicenseTxId,
   };
 
+  if (config.Access !== "Unspecified") {
+    tags["Access"] = config.Access;
+
+    if (tags["Access"] === "restricted") {
+      tags[
+        "Access-Fee"
+      ] = `${config["Access Fee Type"]}-${config["Access Fee Value"]}`;
+    }
+  }
+
   if (config.Derivations === "Allowed-With-RevenueShare") {
     tags[
       "Derivation"
