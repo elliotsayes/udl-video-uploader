@@ -6,7 +6,9 @@ const udlLicenseTxId = "yRj4a5KMctX_uOmKWCFJIjmY8DeJcusVk6-HzLiM_t8";
 export const udlConfigToTags = (
   config: z.infer<typeof zUdlInputSchema>
 ): Record<string, string> | undefined => {
-  const tags: Record<string, string> = {};
+  const tags: Record<string, string> = {
+    License: udlLicenseTxId,
+  };
 
   if (config.Derivations === "Allowed-With-RevenueShare") {
     tags[
@@ -41,12 +43,5 @@ export const udlConfigToTags = (
     tags["Expires"] = config.Expires.toString();
   }
 
-  if (Object.keys(tags).length > 0) {
-    return Object.assign(
-      {
-        License: udlLicenseTxId,
-      },
-      tags
-    );
-  }
+  return tags;
 };
