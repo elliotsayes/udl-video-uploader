@@ -17,6 +17,7 @@ export const udlConfigToTags = (
       tags[
         "Access-Fee"
       ] = `${config["Access Fee Type"]}-${config["Access Fee Value"]}`;
+      tags["Payment-Mode"] = "Global-Distribution";
     }
   }
 
