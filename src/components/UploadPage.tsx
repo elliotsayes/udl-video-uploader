@@ -55,7 +55,7 @@ export const UploadPage = () => {
 
   return (
     <div>
-      <Card className="mx-auto max-w-md lg:max-w-3xl">
+      <Card className="mx-auto max-w-md lg:max-w-3xl text-left">
         <CardHeader>
           <CardTitle>Arseeding UDL Video Uploader</CardTitle>
           {/* <CardDescription>Card Description</CardDescription> */}
