@@ -12,7 +12,7 @@ export const ThemeButton = () => {
 
   return (
     <Button
-      variant={"ghost"}
+      variant={"link"}
       onClick={toggleTheme}
       size={"icon"}
     >
