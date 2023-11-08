@@ -159,7 +159,7 @@ export const UdlForm = (props: Props) => {
           <FormField
             control={form.control}
             name={"License Type"}
-            render={({ field }) => renderSelect(field, 'License Type', 'Required payment terms for commercially licensing the content', zLicenseType.options, 'Unspecified')}
+            render={({ field }) => renderSelect(field, 'License Type', 'Required payment terms for licensing the content', zLicenseType.options, 'Unspecified')}
           />
           <div className={`flex flex-col sm:flex-row gap-4 ${isLicense ? 'h-60 sm:h-32 opacity-100' : 'h-0 opacity-0 overflow-hidden'} transition-all duration-200`}>
             <FormField
