@@ -1,5 +1,16 @@
 import { z } from "zod";
 
+const zFeeType = z.enum(["One-Time", "Monthly"]);
+const zFeeValue = z.number().gt(0, {
+  message: "Must be greater than 0",
+});
+
+export const zAccess = z.enum(["public", "restricted"]);
+
+export const zAccessFeeType = zFeeType;
+
+export const zAccessFeeValue = zFeeValue;
+
 export const zDerivations = z.enum([
   "Allowed-With-Credit",
   "Allowed-With-Indication",
@@ -18,11 +29,9 @@ export const zRevenueSharePercentage = z
 
 export const zCommercialUse = z.enum(["Allowed", "Allowed-With-Credit"]);
 
-export const zLicenseType = z.enum(["Monthly", "One-Time"]);
+export const zLicenseType = zFeeType;
 
-export const zLicenseFeeValue = z.number().gt(0, {
-  message: "Must be greater than 0",
-});
+export const zLicenseFeeValue = zFeeValue;
 
 export const zLicenseFeeCurrency = z.enum(["AR"]);
 
@@ -48,6 +57,12 @@ export const zUnspecified = z.enum(["Unspecified"]);
 
 export const zUdlInputSchema = z
   .object({
+    Access: z.union([zUnspecified, zAccess]),
+    "Access Fee Type": zAccessFeeType,
+    "Access Fee Value": z.union([
+      z.coerce.number().pipe(zAccessFeeValue),
+      z.string().length(0),
+    ]),
     Derivations: z.union([zUnspecified, zDerivations]),
     "Revenue Share Percentage": z.union([
       z.coerce.number().pipe(zRevenueSharePercentage),
@@ -73,6 +88,18 @@ export const zUdlInputSchema = z
         code: z.ZodIssueCode.custom,
         message: "Required field",
         path: ["Revenue Share Percentage"],
+      });
+    }
+  })
+  .superRefine((values, context) => {
+    if (
+      values["Access"] === "restricted" &&
+      typeof values["Access Fee Value"] != "number"
+    ) {
+      context.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Required field",
+        path: ["Access Fee Value"],
       });
     }
   })
