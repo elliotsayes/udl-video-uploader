@@ -30,7 +30,21 @@ export const UdlTable = (props: Props) => {
             return (
               <TableRow key={key}>
                 <TableCell>{key}</TableCell>
-                <TableCell>{value}</TableCell>
+                <TableCell>
+                  {
+                    key === 'License' ? (
+                      <a
+                        href={`https://viewblock.io/arweave/tx/${value}`}
+                        target="_blank"
+                        className="underline"
+                      >
+                        {value}
+                      </a>
+                    ) : (
+                      value
+                    )
+                  }
+                </TableCell>
               </TableRow>
             )
           })
