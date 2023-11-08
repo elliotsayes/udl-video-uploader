@@ -55,7 +55,7 @@ export const uploadVideos = async (
     ...(udlTags != undefined
       ? {
           ...udlTags,
-          ...ucmTags(address, mainVideoTitle),
+          ...ucmTags(address, mainVideo.type, mainVideoTitle),
         }
       : {}),
     ...(trailerVideoResult !== undefined
