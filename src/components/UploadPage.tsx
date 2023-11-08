@@ -21,6 +21,7 @@ import { SubmittingDialog } from "./SubmittingDialog"
 import { SubmitSuccessDialog } from "./SubmitSuccessDialog"
 import { uploadVideos } from "@/lib/upload"
 import { SubmitFailureDialog } from "./SubmitFailureDialog"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 
 export const UploadPage = () => {
   const [current, send] = useMachine(
@@ -46,6 +47,8 @@ export const UploadPage = () => {
       },
     }
   )
+
+  const canSumbit = current.can({ type: "confirm symbol", data: { symbol: "AR" } });
 
   const [isUdlSheetOpen, setIsUdlSheetOpen] = useState(false)
   const [isSubmitDialogOpen, setIsSubmitDialogOpen] = useState(false)
@@ -121,14 +124,36 @@ export const UploadPage = () => {
               </div>
             </CardContent>
           </Card>
-          <Button
-            size={"lg"}
-            onClick={() => setIsSubmitDialogOpen(true)}
-            className={`mx-auto ${current.can({ type: "confirm symbol", data: { symbol: "AR" } }) && current.matches('configuring.udlConfig.hasConfig') ? 'animate-pulse' : ''}`}
-            disabled={!current.can({ type: "confirm symbol", data: { symbol: "AR" } })}
-          >
-            Upload With Everpay
-          </Button>
+          <div className="mx-auto pt-6">
+            <TooltipProvider>
+              <Tooltip
+                delayDuration={canSumbit ? 500 : 200}
+              >
+                <TooltipTrigger
+                  disabled={!canSumbit}
+                  className={`${canSumbit ? '' : ' cursor-not-allowed'}`}
+                >
+                  <Button
+                    size={"lg"}
+                    onClick={() => setIsSubmitDialogOpen(true)}
+                    className={`${canSumbit && current.matches('configuring.udlConfig.hasConfig') ? 'animate-pulse' : ''}`}
+                    disabled={!canSumbit}
+                  >
+                    Upload With Everpay
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  {
+                    canSumbit ? (
+                      "Click to Upload!"
+                    ) : (
+                      "Requires Main Video"
+                    )
+                  }
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
         </CardContent>
       </Card>
       <Sheet
