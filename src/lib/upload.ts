@@ -1,41 +1,75 @@
 import { Token } from "everpay";
 import { SendAndPayResult, getInstance, uploadFile } from "./arseeding";
 import { getSymbolFirstTag } from "./everpay";
+import { stripExtension } from "./utils";
+import { ucmTags } from "./ucm";
+
+const getTitle = (file: File) => stripExtension(file.name);
+
+const fileTags = (file: File) => ({
+  "Content-Type": file.type,
+  "File-Name": file.name,
+});
+
+const discoverabilityTags = (title: string) => ({
+  Type: "video",
+  Title: title,
+  Description: "Arseeding UDL Video Uploader",
+});
 
 export const uploadVideos = async (
   mainVideo: File,
-  udlTags: Record<string, string>,
   everpayTokens: Token[],
   symbol: string,
-  update: (message: string) => void,
-  trailerVideo?: File
+  udlTags?: Record<string, string>,
+  trailerVideo?: File,
+  log?: (message: string) => void
 ) => {
   const tag = getSymbolFirstTag(everpayTokens, symbol)!;
 
-  update("Connecting to Arweave Wallet...");
+  log?.("Connecting to Arweave Wallet...");
   const { instance, address } = await getInstance();
-  update(`Connected to Arweave Wallet: ${address}`);
+  log?.(`Connected to Arweave Wallet: ${address}`);
 
   let trailerVideoResult: SendAndPayResult | undefined;
   if (trailerVideo !== undefined) {
-    update("Uploading trailer video...");
-    trailerVideoResult = await uploadFile(instance, tag, trailerVideo, {
-      "File-Name": trailerVideo.name,
-      "Content-Type": trailerVideo.type,
-    });
+    log?.("Uploading trailer video...");
+    const trailerVideoTitle = getTitle(trailerVideo);
+    const trailerVideoTags = {
+      ...fileTags(trailerVideo),
+      ...discoverabilityTags(trailerVideoTitle),
+    };
+    trailerVideoResult = await uploadFile(
+      instance,
+      tag,
+      trailerVideo,
+      trailerVideoTags
+    );
   }
 
-  update("Uploading main video...");
-  const mainVideoResult = await uploadFile(instance, tag, mainVideo, {
-    "File-Name": mainVideo.name,
-    "Content-Type": mainVideo.type,
-    ...udlTags,
+  log?.("Uploading main video...");
+  const mainVideoTitle = getTitle(mainVideo);
+  const mainVideoTags = {
+    ...fileTags(mainVideo),
+    ...discoverabilityTags(mainVideoTitle),
+    ...(udlTags != undefined
+      ? {
+          ...udlTags,
+          ...ucmTags(address, mainVideoTitle),
+        }
+      : {}),
     ...(trailerVideoResult !== undefined
       ? { Trailer: trailerVideoResult.order.itemId }
       : {}),
-  });
+  };
+  const mainVideoResult = await uploadFile(
+    instance,
+    tag,
+    mainVideo,
+    mainVideoTags
+  );
 
-  update("Done!");
+  log?.("Done!");
 
   return {
     mainVideoResult,

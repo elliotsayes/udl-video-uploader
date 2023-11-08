@@ -32,9 +32,10 @@ export const UploadPage = () => {
         }),
         submitToEverpay: (context) => (send) => {
           const { mainVideo, trailerVideo, udlTags, everpayTokens, uploadSymbol } = context;
-          send({ type: "update submitting", data: { message: "Starting upload process..." }})
+          const log = (message: string) => send({ type: "update submitting", data: { message }})
+          log("Starting upload process...")
 
-          uploadVideos(mainVideo!, udlTags!, everpayTokens!, uploadSymbol!, (message) => send({ type: "update submitting", data: { message }}), trailerVideo).then((data) => {
+          uploadVideos(mainVideo!, everpayTokens!, uploadSymbol!, udlTags, trailerVideo, log).then((data) => {
             console.log({data})
             send({ type: 'upload success', data })
           }).catch((uploadError) => {

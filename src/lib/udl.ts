@@ -1,9 +1,11 @@
 import { z } from "zod";
 import { zExpires, zPaymentAddress, zUdlInputSchema } from "@/types/udl";
 
+const udlLicenseTxId = "yRj4a5KMctX_uOmKWCFJIjmY8DeJcusVk6-HzLiM_t8";
+
 export const udlConfigToTags = (
   config: z.infer<typeof zUdlInputSchema>
-): Record<string, string> => {
+): Record<string, string> | undefined => {
   const tags: Record<string, string> = {};
 
   if (config.Derivations === "Allowed-With-RevenueShare") {
@@ -39,7 +41,12 @@ export const udlConfigToTags = (
     tags["Expires"] = config.Expires.toString();
   }
 
-  console.log({ config, tags });
-
-  return tags;
+  if (Object.keys(tags).length > 0) {
+    return Object.assign(
+      {
+        License: udlLicenseTxId,
+      },
+      tags
+    );
+  }
 };
