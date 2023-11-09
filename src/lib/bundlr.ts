@@ -7,6 +7,7 @@ import {
   discoverabilityTags,
   fileTags,
   getTitle,
+  rendererTags,
 } from "./upload";
 import { BigNumber } from "bignumber.js";
 import { ensureRegistered } from "./warp";
@@ -146,6 +147,7 @@ export const uploadVideosToBundlr = async (
           ...ucmTags(address, mainVideo.type, mainVideoTitle),
         }
       : {}),
+    ...rendererTags(),
     ...(trailerVideoResult !== undefined
       ? { Trailer: trailerVideoResult.id }
       : {}),
