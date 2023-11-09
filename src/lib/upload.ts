@@ -1,4 +1,5 @@
-import { stripExtension } from "./utils";
+import { config } from "@/config";
+import { formatTagHuman, stripExtension } from "./utils";
 
 export const getTitle = (file: File) => stripExtension(file.name);
 
@@ -10,7 +11,9 @@ export const fileTags = (file: File) => ({
 export const discoverabilityTags = (title: string) => ({
   Type: "video",
   Title: title,
-  Description: "Arseeding UDL Video Uploader",
+  Description: `Uploaded with UDL Video Uploader via ${formatTagHuman(
+    config.uploader
+  )}`,
 });
 
 export const rendererTags = (rendererTxId: string) => {
