@@ -58,10 +58,10 @@ export const UploadPage = () => {
               console.log({data})
               send({ type: 'upload success', data })
             })
-            // .catch((uploadError) => {
-            //   console.error({uploadError})
-            //   send({ type: 'upload failed', data: { uploadError } })
-            // });
+            .catch((uploadError) => {
+              console.error({uploadError})
+              send({ type: 'upload failed', data: { uploadError } })
+            });
           }
         }
       },
