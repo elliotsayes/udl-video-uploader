@@ -2,8 +2,18 @@ import { genArweaveAPI, getBundleFee } from "arseeding-js";
 import { addressFromPublicKey } from "./arweave";
 import { GenArweaveAPIReturn } from "arseeding-js/cjs/types";
 import { config } from "@/config";
+import { Token } from "everpay";
+import { getSymbolFirstTag } from "./everpay";
+import { ucmTags } from "./ucm";
+import {
+  UploadResult,
+  UploadVideosResult,
+  discoverabilityTags,
+  fileTags,
+  getTitle,
+} from "./upload";
 
-export type SendAndPayResult = {
+type SendAndPayResult = {
   everHash?: string;
   order: {
     itemId: string;
@@ -18,7 +28,7 @@ export type SendAndPayResult = {
   };
 };
 
-export type UploadFeeResult = {
+type UploadFeeResult = {
   currency: string;
   decimals: number;
   finalFee: string;
@@ -33,7 +43,7 @@ export const getUploadFee = async (
   return fee;
 };
 
-export const getInstance = async () => {
+const connectInstance = async () => {
   const instance = await genArweaveAPI(window.arweaveWallet);
   const address = await addressFromPublicKey(instance.signer.publicKey);
 
@@ -43,12 +53,12 @@ export const getInstance = async () => {
   };
 };
 
-export const uploadFile = async (
+const uploadFile = async (
   instance: GenArweaveAPIReturn,
   tag: string,
   file: File,
   tags: Record<string, string>
-): Promise<SendAndPayResult> => {
+): Promise<UploadResult> => {
   const fileArrayBuffer = await file.arrayBuffer();
   const fileBuffer = Buffer.from(fileArrayBuffer);
 
@@ -61,7 +71,7 @@ export const uploadFile = async (
 
   const arseedingUrl = config.arseedingUrl;
   console.log({ arseedingUrl, tag, options });
-  const sendAndPayResult = await instance.sendAndPay(
+  const sendAndPayResult: SendAndPayResult = await instance.sendAndPay(
     arseedingUrl,
     fileBuffer,
     tag,
@@ -69,5 +79,67 @@ export const uploadFile = async (
   );
 
   console.log({ sendAndPayResult });
-  return sendAndPayResult as SendAndPayResult;
+  return {
+    id: sendAndPayResult.order.itemId,
+  };
+};
+
+export const uploadVideosToArseeding = async (
+  mainVideo: File,
+  everpayTokens: Token[],
+  symbol: string,
+  udlTags?: Record<string, string>,
+  trailerVideo?: File,
+  log?: (message: string) => void
+): Promise<UploadVideosResult> => {
+  const tag = getSymbolFirstTag(everpayTokens, symbol)!;
+
+  log?.("Connecting to Arweave Wallet...");
+  const { instance, address } = await connectInstance();
+  log?.(`Connected to Arweave Wallet: ${address}`);
+
+  let trailerVideoResult: UploadResult | undefined;
+  if (trailerVideo !== undefined) {
+    log?.("Uploading trailer video...");
+    const trailerVideoTitle = getTitle(trailerVideo);
+    const trailerVideoTags = {
+      ...fileTags(trailerVideo),
+      ...discoverabilityTags(trailerVideoTitle),
+    };
+    trailerVideoResult = await uploadFile(
+      instance,
+      tag,
+      trailerVideo,
+      trailerVideoTags
+    );
+  }
+
+  log?.("Uploading main video...");
+  const mainVideoTitle = getTitle(mainVideo);
+  const mainVideoTags = {
+    ...fileTags(mainVideo),
+    ...discoverabilityTags(mainVideoTitle),
+    ...(udlTags != undefined
+      ? {
+          ...udlTags,
+          ...ucmTags(address, mainVideo.type, mainVideoTitle),
+        }
+      : {}),
+    ...(trailerVideoResult !== undefined
+      ? { Trailer: trailerVideoResult.id }
+      : {}),
+  };
+  const mainVideoResult = await uploadFile(
+    instance,
+    tag,
+    mainVideo,
+    mainVideoTags
+  );
+
+  log?.("Done!");
+
+  return {
+    mainVideoResult,
+    trailerVideoResult,
+  };
 };

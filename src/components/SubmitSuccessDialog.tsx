@@ -1,19 +1,23 @@
 import { DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { SendAndPayResult } from "@/lib/arseeding";
 import { VideoPreview } from "./VideoPreview";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { config } from "@/config";
+import { UploadResult } from "@/lib/upload";
 
 interface Props {
-  mainVideoResult: SendAndPayResult;
-  trailerVideoResult?: SendAndPayResult;
+  mainVideoResult: UploadResult;
+  trailerVideoResult?: UploadResult;
 }
+
+const isArseeding = config.uploader === "arseeding";
 
 export const SubmitSuccessDialog = (props: Props) => {
   const { mainVideoResult, trailerVideoResult } = props;
 
-  const renderResult = (title: string, result: SendAndPayResult) => {
-    const url = `${config.arseedingUrl}/${result.order.itemId}`;
+  const renderResult = (title: string, result: UploadResult) => {
+    const url = isArseeding 
+      ? `${config.arseedingUrl}/${result.id}`
+      : `https://arweave.net/${result.id}`
     
     return (
       <Card>
@@ -33,9 +37,12 @@ export const SubmitSuccessDialog = (props: Props) => {
               target="_blank"
               className="underline"
             >
-              Arseeding Gateway
+              {
+                isArseeding ? "Arseeding Gateway" : "Arweave Gateway"
+              }
             </a>
             .
+            (<span onClick={() => navigator.clipboard.writeText(result.id)}>copy #</span>)
           </p>
         </CardContent>
       </Card>

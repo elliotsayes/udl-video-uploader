@@ -19,30 +19,50 @@ import { Dialog } from "@/components/ui/dialog"
 import { EverpayDialog } from "./EverpayDialog"
 import { SubmittingDialog } from "./SubmittingDialog"
 import { SubmitSuccessDialog } from "./SubmitSuccessDialog"
-import { uploadVideosToArseeding } from "@/lib/upload"
 import { SubmitFailureDialog } from "./SubmitFailureDialog"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+import { uploadVideosToArseeding } from "@/lib/arseeding"
+import { config } from "@/config"
+import { uploadVideosToBundlr } from "@/lib/bundlr"
+
+const isArseeding = config.uploader === "arseeding"
 
 export const UploadPage = () => {
   const [current, send] = useMachine(
-    () => uploadPageMachine({}),
+    () => uploadPageMachine({
+      isArseeding: isArseeding
+    }),
     {
+      guards: {
+        isArseeding: () => isArseeding,
+      },
       services: {
         loadEverpayTokens: async () => ({
           everpayTokens: await loadEverpayTokens(),
         }),
-        submitToEverpay: (context) => (send) => {
+        runUploadProcess: (context) => (send) => {
           const { mainVideo, trailerVideo, udlTags, everpayTokens, uploadSymbol } = context;
           const log = (message: string) => send({ type: "update submitting", data: { message }})
           log("Starting upload process...")
 
-          uploadVideosToArseeding(mainVideo!, everpayTokens!, uploadSymbol!, udlTags, trailerVideo, log).then((data) => {
-            console.log({data})
-            send({ type: 'upload success', data })
-          }).catch((uploadError) => {
-            console.error({uploadError})
-            send({ type: 'upload failed', data: { uploadError } })
-          });
+          if (isArseeding) {
+            uploadVideosToArseeding(mainVideo!, everpayTokens!, uploadSymbol!, udlTags, trailerVideo, log).then((data) => {
+              console.log({data})
+              send({ type: 'upload success', data })
+            }).catch((uploadError) => {
+              console.error({uploadError})
+              send({ type: 'upload failed', data: { uploadError } })
+            });
+          } else {
+            uploadVideosToBundlr(mainVideo!, "arweave", udlTags, trailerVideo, log).then((data) => {
+              console.log({data})
+              send({ type: 'upload success', data })
+            })
+            // .catch((uploadError) => {
+            //   console.error({uploadError})
+            //   send({ type: 'upload failed', data: { uploadError } })
+            // });
+          }
         }
       },
     }
@@ -133,14 +153,27 @@ export const UploadPage = () => {
                   disabled={!canSumbit}
                   className={`${canSumbit ? '' : ' cursor-not-allowed'}`}
                 >
-                  <Button
-                    size={"lg"}
-                    onClick={() => setIsSubmitDialogOpen(true)}
-                    className={`${canSumbit && current.matches('configuring.udlConfig.hasConfig') ? 'animate-pulse' : ''}`}
-                    disabled={!canSumbit}
-                  >
-                    Upload With Everpay
-                  </Button>
+                  {
+                    isArseeding ? (
+                      <Button
+                        size={"lg"}
+                        onClick={() => setIsSubmitDialogOpen(true)}
+                        className={`${canSumbit && current.matches('configuring.udlConfig.hasConfig') ? 'animate-pulse' : ''}`}
+                        disabled={!canSumbit}
+                      >
+                        Upload With Everpay
+                      </Button>
+                    ) : (
+                      <Button
+                        size={"lg"}
+                        onClick={() => send({type: "confirm symbol", data: { symbol: "AR" }})}
+                        className={`${canSumbit && current.matches('configuring.udlConfig.hasConfig') ? 'animate-pulse' : ''}`}
+                        disabled={!canSumbit}
+                      >
+                        Upload With Bundlr
+                      </Button>
+                    )
+                  }
                 </TooltipTrigger>
                 <TooltipContent>
                   {

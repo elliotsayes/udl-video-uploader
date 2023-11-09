@@ -23,13 +23,13 @@ export interface Typegen0 {
   };
   invokeSrcNameMap: {
     loadEverpayTokens: "done.invoke.uploadPage.configuring.everpay.loading:invocation[0]";
-    submitToEverpay: "done.invoke.uploadPage.submitting:invocation[0]";
+    runUploadProcess: "done.invoke.uploadPage.submitting:invocation[0]";
   };
   missingImplementations: {
     actions: never;
     delays: never;
-    guards: never;
-    services: "loadEverpayTokens" | "submitToEverpay";
+    guards: "isArseeding";
+    services: "loadEverpayTokens" | "runUploadProcess";
   };
   eventsCausingActions: {
     appendSubmitLog: "update submitting";
@@ -47,12 +47,13 @@ export interface Typegen0 {
   eventsCausingDelays: {};
   eventsCausingGuards: {
     canSubmitConfig: "confirm symbol";
+    isArseeding: "xstate.after(100)#uploadPage.configuring.everpay.idle";
   };
   eventsCausingServices: {
     loadEverpayTokens:
       | "xstate.after(100)#uploadPage.configuring.everpay.idle"
       | "xstate.after(1000)#uploadPage.configuring.everpay.failed";
-    submitToEverpay: "confirm symbol";
+    runUploadProcess: "confirm symbol";
   };
   matchesStates:
     | "configuring"
