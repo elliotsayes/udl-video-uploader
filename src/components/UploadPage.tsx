@@ -77,7 +77,7 @@ export const UploadPage = () => {
     <div>
       <Card className="mx-auto max-w-md lg:max-w-3xl text-left">
         <CardHeader>
-          <CardTitle>Arseeding UDL Video Uploader</CardTitle>
+          <CardTitle>UDL Video Uploader</CardTitle>
           {/* <CardDescription>Card Description</CardDescription> */}
         </CardHeader>
         <CardContent className="flex flex-col gap-4 items-stretch">
