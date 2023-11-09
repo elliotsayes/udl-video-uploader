@@ -26,7 +26,7 @@ export const SubmitSuccessDialog = (props: Props) => {
           {/* <CardDescription>{subtitle}</CardDescription> */}
         </CardHeader>
         <CardContent className="relative flex flex-col items-center">
-        <VideoPreview 
+          <VideoPreview 
             controls={true}
             url={url}
           />
