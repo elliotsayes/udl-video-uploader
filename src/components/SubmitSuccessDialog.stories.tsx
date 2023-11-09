@@ -29,10 +29,10 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 const mainVideoResult = {
-  "id": "Ff6hyvaICMBnYyADpZLkvDj69LzraxR2XWl5BdOlvHI",
+  "id": "JFYT52DfXmMJwAN2q32sFces6xpPwO27qbfRkzxLt7k",
 };
 const trailerVideoResult = {
-  "id": "SoN2tDbptfy4B7sY6Gw-WvU_yC3UuWHfyfPb6Qlhhkg",
+  "id": "GEyG8qxaEp-EYshDH7rjJQ9hptP_-OAcmRMtXLWJnLY",
 };
 
 // More on writing stories with args: https://storybook.js.org/docs/react/writing-stories/args

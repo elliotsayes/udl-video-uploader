@@ -14,11 +14,12 @@ const isArseeding = config.uploader === "arseeding";
 export const SubmitSuccessDialog = (props: Props) => {
   const { mainVideoResult, trailerVideoResult } = props;
 
-  const renderResult = (title: string, result: UploadResult) => {
-    const url = isArseeding 
+  const renderResult = (title: string, result: UploadResult, isAsset?: boolean) => {
+    const gatewayUrl = isArseeding 
       ? `${config.arseedingUrl}/${result.id}`
       : `https://arweave.net/${result.id}`
-    
+    const mainVideoBazarUrl = `https://bazar.arweave.dev/#/asset/${mainVideoResult.id}`
+
     return (
       <Card>
         <CardHeader>
@@ -28,12 +29,27 @@ export const SubmitSuccessDialog = (props: Props) => {
         <CardContent className="relative flex flex-col items-center">
           <VideoPreview 
             controls={true}
-            url={url}
+            url={gatewayUrl}
           />
-          <p>
-            Open on{' '}
+          <p className="text-center">
+            { 
+              (!isArseeding && isAsset) && (
+                <>
+                  Open asset on{' '}
+                  <a
+                    href={mainVideoBazarUrl}
+                    target="_blank"
+                    className="underline"
+                  >
+                    BazAr
+                  </a>
+                  <br />
+                </>
+              )
+            }
+            Open tx on{' '}
             <a
-              href={url}
+              href={gatewayUrl}
               target="_blank"
               className="underline"
             >
@@ -41,8 +57,13 @@ export const SubmitSuccessDialog = (props: Props) => {
                 isArseeding ? "Arseeding Gateway" : "Arweave Gateway"
               }
             </a>
-            .
-            (<span onClick={() => navigator.clipboard.writeText(result.id)}>copy #</span>)
+            {' '}or{' '}
+            <span
+              onClick={() => navigator.clipboard.writeText(result.id)}
+              className="underline cursor-pointer"
+            >
+              copy txId
+            </span>
           </p>
         </CardContent>
       </Card>
@@ -58,7 +79,7 @@ export const SubmitSuccessDialog = (props: Props) => {
         </DialogDescription> */}
       </DialogHeader>
       <div className="flex flex-col gap-4">
-        {renderResult('Main Video', mainVideoResult)}
+        {renderResult('Main Video', mainVideoResult, true)}
         {trailerVideoResult && renderResult('Trailer Video', trailerVideoResult)}
       </div>
     </DialogContent>
