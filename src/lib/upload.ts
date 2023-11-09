@@ -1,4 +1,3 @@
-import { config } from "@/config";
 import { stripExtension } from "./utils";
 
 export const getTitle = (file: File) => stripExtension(file.name);
@@ -14,8 +13,8 @@ export const discoverabilityTags = (title: string) => ({
   Description: "Arseeding UDL Video Uploader",
 });
 
-export const rendererTags = () => {
-  return config.rendererTxId ? { "Render-With": config.rendererTxId } : {};
+export const rendererTags = (rendererTxId: string) => {
+  return { "Render-With": rendererTxId };
 };
 
 export type UploadResult = {
