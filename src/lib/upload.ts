@@ -18,20 +18,17 @@ export const discoverabilityTags = (title: string) => ({
 });
 
 export const rendererTags = async (): Promise<Record<string, string>> => {
+  let rendererTxId = config.defaultRendererTxId!;
   const rendererArns = config.rendererArns;
   try {
-    const arnsRendererTxId = await getArnsRootTransaction(rendererArns);
-    return {
-      "Render-With": arnsRendererTxId,
-      "Render-With-ArNS": rendererArns,
-    };
+    rendererTxId = await getArnsRootTransaction(rendererArns);
   } catch (e) {
     console.error(`Error getting ArNS for ${rendererArns}`, e);
-    const rendererTxId = config.defaultRendererTxId!;
-    return {
-      "Render-With": rendererTxId,
-    };
   }
+  return {
+    "Render-With": rendererTxId,
+    "Render-With-ArNS": rendererArns,
+  };
 };
 
 export type UploadResult = {
