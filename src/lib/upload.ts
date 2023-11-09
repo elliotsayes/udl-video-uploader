@@ -1,5 +1,6 @@
 import { config } from "@/config";
 import { formatTagHuman, stripExtension } from "./utils";
+import { getArnsRootTransaction } from "./arns";
 
 export const getTitle = (file: File) => stripExtension(file.name);
 
@@ -16,8 +17,13 @@ export const discoverabilityTags = (title: string) => ({
   )}`,
 });
 
-export const rendererTags = (rendererTxId: string) => {
-  return { "Render-With": rendererTxId };
+export const rendererTags = async () => {
+  const rendererArns = config.rendererArns;
+  const rendererTxId = await getArnsRootTransaction(rendererArns);
+  return {
+    "Render-With": rendererTxId,
+    "Render-With-ArNS": rendererArns,
+  };
 };
 
 export type UploadResult = {

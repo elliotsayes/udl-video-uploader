@@ -10,6 +10,7 @@ import {
   discoverabilityTags,
   fileTags,
   getTitle,
+  rendererTags,
 } from "./upload";
 
 type SendAndPayResult = {
@@ -126,6 +127,7 @@ export const uploadVideosToArseeding = async (
     //       ...ucmTags(address, mainVideo.type, mainVideoTitle),
     //     }
     //   : {}),
+    ...(await rendererTags()),
     ...(trailerVideoResult !== undefined
       ? { Trailer: trailerVideoResult.id }
       : {}),

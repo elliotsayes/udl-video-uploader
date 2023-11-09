@@ -138,7 +138,6 @@ export const uploadVideosToBundlr = async (
 
   log?.("Uploading main video...");
   const mainVideoTitle = getTitle(mainVideo);
-  const rendererTxId = config.rendererTxId;
   const mainVideoTags = {
     ...fileTags(mainVideo),
     ...discoverabilityTags(mainVideoTitle),
@@ -148,7 +147,7 @@ export const uploadVideosToBundlr = async (
           ...ucmTags(address, mainVideo.type, mainVideoTitle),
         }
       : {}),
-    ...(rendererTxId !== undefined ? rendererTags(rendererTxId) : {}),
+    ...(await rendererTags()),
     ...(trailerVideoResult !== undefined
       ? { Trailer: trailerVideoResult.id }
       : {}),
