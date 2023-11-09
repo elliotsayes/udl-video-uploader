@@ -4,7 +4,6 @@ import { GenArweaveAPIReturn } from "arseeding-js/cjs/types";
 import { config } from "@/config";
 import { Token } from "everpay";
 import { getSymbolFirstTag } from "./everpay";
-import { ucmTags } from "./ucm";
 import {
   UploadResult,
   UploadVideosResult,
@@ -119,12 +118,14 @@ export const uploadVideosToArseeding = async (
   const mainVideoTags = {
     ...fileTags(mainVideo),
     ...discoverabilityTags(mainVideoTitle),
-    ...(udlTags != undefined
-      ? {
-          ...udlTags,
-          ...ucmTags(address, mainVideo.type, mainVideoTitle),
-        }
-      : {}),
+    // Arseeding does not work with UCM, as warp can only register contracts
+    // that were uploaded via Bundlr
+    // ...(udlTags != undefined
+    //   ? {
+    //       ...udlTags,
+    //       ...ucmTags(address, mainVideo.type, mainVideoTitle),
+    //     }
+    //   : {}),
     ...(trailerVideoResult !== undefined
       ? { Trailer: trailerVideoResult.id }
       : {}),
