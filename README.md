@@ -6,7 +6,7 @@ Created as part of [Permahacks](https://permahacks.arweave.dev/) for everVision'
 
 ### Prerequisites
 
-- bun
+- [bun](https://bun.sh/)
 
 ### Process
 
