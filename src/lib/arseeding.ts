@@ -114,6 +114,9 @@ export const uploadVideosToArseeding = async (
     );
   }
 
+  log?.("Getting latest renderer...");
+  const latestRendererTags = await rendererTags();
+
   log?.("Uploading main video...");
   const mainVideoTitle = getTitle(mainVideo);
   const mainVideoTags = {
@@ -127,7 +130,7 @@ export const uploadVideosToArseeding = async (
     //       ...ucmTags(address, mainVideo.type, mainVideoTitle),
     //     }
     //   : {}),
-    ...(await rendererTags()),
+    ...latestRendererTags,
     ...(trailerVideoResult !== undefined
       ? { Trailer: trailerVideoResult.id }
       : {}),
