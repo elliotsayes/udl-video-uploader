@@ -17,13 +17,21 @@ export const discoverabilityTags = (title: string) => ({
   )}`,
 });
 
-export const rendererTags = async () => {
+export const rendererTags = async (): Promise<Record<string, string>> => {
   const rendererArns = config.rendererArns;
-  const rendererTxId = await getArnsRootTransaction(rendererArns);
-  return {
-    "Render-With": rendererTxId,
-    "Render-With-ArNS": rendererArns,
-  };
+  try {
+    const arnsRendererTxId = await getArnsRootTransaction(rendererArns);
+    return {
+      "Render-With": arnsRendererTxId,
+      "Render-With-ArNS": rendererArns,
+    };
+  } catch (e) {
+    console.error(`Error getting ArNS for ${rendererArns}`, e);
+    const rendererTxId = config.defaultRendererTxId!;
+    return {
+      "Render-With": rendererTxId,
+    };
+  }
 };
 
 export type UploadResult = {
