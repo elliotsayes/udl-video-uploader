@@ -147,7 +147,7 @@ export const uploadVideosToArseeding = async (
   let waitTimeMs = 1 * 30 * 1000;
   let success = false;
   while (!success) {
-    log?.("Checking balance...");
+    log?.("Sending request to Warp gateway...");
     try {
       const registrationResult = await ensureRegistered(
         mainVideoResult.id,
@@ -167,7 +167,9 @@ export const uploadVideosToArseeding = async (
       }
     } catch (e) {
       console.error("ensureRegistered", e);
-      log?.(`Transaction pending, sleeping for ${waitTimeMs / 1000}s...`);
+      log?.(
+        `Transaction is still pending, sleeping for ${waitTimeMs / 1000}s...`
+      );
       await new Promise((resolve) => setTimeout(resolve, waitTimeMs));
       waitTimeMs = Math.min(waitTimeMs * 2, 2 * 60 * 1000);
     }
