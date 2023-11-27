@@ -159,7 +159,7 @@ export const uploadVideosToBundlr = async (
 
   log?.("Registering atomic asset with Warp...");
   const result = await ensureRegistered(mainVideoResult.id, config.bundlrNode);
-  log?.(`Registered with Warp: ${JSON.stringify(result)}`);
+  log?.(`Registered with Warp: ${JSON.stringify(await result.json())}`);
 
   try {
     log?.("Checking remaining balance...");

@@ -142,9 +142,36 @@ export const uploadVideosToArseeding = async (
     mainVideoTags
   );
 
-  log?.("Registering atomic asset with Warp...");
-  const result = await ensureRegistered(mainVideoResult.id, "arweave");
-  log?.(`Registered with Warp: ${JSON.stringify(result)}`);
+  log?.("Registering atomic asset with Warp.");
+
+  let waitTimeMs = 1 * 30 * 1000;
+  let success = false;
+  while (!success) {
+    log?.("Checking balance...");
+    try {
+      const registrationResult = await ensureRegistered(
+        mainVideoResult.id,
+        "arweave"
+      );
+      if (registrationResult.ok) {
+        success = true;
+        log?.(
+          `Transactions registered with Warp: ${JSON.stringify(
+            registrationResult.json()
+          )}`
+        );
+      } else {
+        throw new Error(
+          `Error registering with Warp: ${registrationResult.status}`
+        );
+      }
+    } catch (e) {
+      console.error("ensureRegistered", e);
+      log?.(`Transaction pending, sleeping for ${waitTimeMs / 1000}s...`);
+      await new Promise((resolve) => setTimeout(resolve, waitTimeMs));
+      waitTimeMs = Math.min(waitTimeMs * 2, 2 * 60 * 1000);
+    }
+  }
 
   log?.("Done!");
 

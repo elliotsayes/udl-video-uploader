@@ -16,5 +16,5 @@ export const ensureRegistered = async (
       body: JSON.stringify({ id, bundlrNode }),
     }
   );
-  return await registerResult.json();
+  return registerResult;
 };
