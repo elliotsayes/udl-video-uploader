@@ -33,7 +33,7 @@ export const SubmitSuccessDialog = (props: Props) => {
           />
           <p className="text-center">
             { 
-              (!isArseeding && isAsset) && (
+              isAsset && (
                 <>
                   Open asset on{' '}
                   <a
