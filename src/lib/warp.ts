@@ -3,7 +3,7 @@ const GATEWAY_HOST = "https://gateway.warp.cc";
 
 export const ensureRegistered = async (
   id: string,
-  bundlrNode: "node1" | "node2"
+  bundlrNode: "node1" | "node2" | "arweave"
 ) => {
   const registerResult = await fetch(
     `${GATEWAY_HOST}/gateway/contracts/register`,

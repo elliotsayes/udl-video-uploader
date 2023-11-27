@@ -12,6 +12,8 @@ import {
   getTitle,
   rendererTags,
 } from "./upload";
+import { ucmTags } from "./ucm";
+import { ensureRegistered } from "./warp";
 
 type SendAndPayResult = {
   everHash?: string;
@@ -122,14 +124,12 @@ export const uploadVideosToArseeding = async (
   const mainVideoTags = {
     ...fileTags(mainVideo),
     ...discoverabilityTags(mainVideoTitle),
-    // Arseeding does not work with UCM, as warp can only register contracts
-    // that were uploaded via Bundlr
-    // ...(udlTags != undefined
-    //   ? {
-    //       ...udlTags,
-    //       ...ucmTags(address, mainVideo.type, mainVideoTitle),
-    //     }
-    //   : {}),
+    ...(udlTags != undefined
+      ? {
+          ...udlTags,
+          ...ucmTags(address, mainVideo.type, mainVideoTitle),
+        }
+      : {}),
     ...latestRendererTags,
     ...(trailerVideoResult !== undefined
       ? { Trailer: trailerVideoResult.id }
@@ -141,6 +141,10 @@ export const uploadVideosToArseeding = async (
     mainVideo,
     mainVideoTags
   );
+
+  log?.("Registering atomic asset with Warp...");
+  const result = await ensureRegistered(mainVideoResult.id, "arweave");
+  log?.(`Registered with Warp: ${JSON.stringify(result)}`);
 
   log?.("Done!");
 
